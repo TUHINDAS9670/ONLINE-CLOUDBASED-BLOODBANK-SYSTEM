@@ -286,7 +286,6 @@ const Register = () => {
                   </div>
                 </div>
               )}
-
             {(role === "Admin" || role === "Donor") && (
               <div>
                 {/* Address */}
