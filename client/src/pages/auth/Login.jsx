@@ -1,163 +1,152 @@
 import React, { useState } from "react";
-
-import{Link} from 'react-router-dom'
+import { Link } from "react-router-dom";
 
 export const Login = () => {
-   const [role, setRole] = useState("Donor");
+  const [role, setRole] = useState("Donor"); // Separate state for role
   const [formData, setFormData] = useState({
     email: "",
     password: "",
-    role:"",
-
+    role: "Donor", // Default role
   });
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleRoleChange = (newRole) => {
+    setRole(newRole);
+    setFormData((prev) => ({ ...prev, role: newRole })); // Update role in formData
   };
 
   const handleSubmit = (e) => {
+    // if(!formData.email || !formData.password|| formData.role){
+    //   return(
+    //     alert("please provide all fields")
+    //   )
+    // }
     e.preventDefault();
-    console.log("Login Details: ", formData);
-
+    console.log("Login Details:", formData); // Debugging log
     alert("Login Successfully!");
     setFormData({
       email: "",
       password: "",
+      role: "Donor", // Reset role to default
     });
+    setRole("Donor"); // Reset role state
   };
 
   return (
-    <div>
-      <div className="flex flex-wrap gap-0">
-        <div className="w-full md:w-2/3">
-          <img
-            // src={old}
-            alt="loginImage"
-            className="w-full h-full object-cover"
-          />
-        </div>
-      
-      <div className=" w-full md:w-1/3 form-container h-screen flex  justify-center items-center">
-    
-      <div className="w-[600px] p-6 bg-white shadow-lg rounded-md ">
-        <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
-         {/* role checking */}
-
-         <div className="flex items-center justify-center m-5 font-bold text-gray-600 text-lg">
-            <div className="mt-1 flex ">
-              <label className="ml-2">
-                <input
-                  type="radio"
-                  name="role"
-                  id="donorRadio"
-                  value={"Donor"}
-                  onChange={(e) => {
-                    setRole(e.target.value);
-                  }}
-                  className="mr-2"
-                  defaultChecked
-                />
-                Donor
-              </label>
-              <label className="ml-2">
-                <input
-                  type="radio"
-                  name="role"
-                  id="adminRadio"
-                  value={"Admin"}
-                  onChange={(e) => {
-                    setRole(e.target.value);
-                  }}
-                  className="mr-2"
-                />
-                Admin
-              </label>
-              <label className="ml-2">
-                <input
-                  type="radio"
-                  name="role"
-                  id="hospitalRadio"
-                  value={"Hospital"}
-                  onChange={(e) => {
-                    setRole(e.target.value);
-                  }}
-                  className="mr-2"
-                />
-                Hospital
-              </label>
-              <label className="ml-2">
-                <input
-                  type="radio"
-                  name="role"
-                  id="organisationRadio"
-                  value={"Organisation"}
-                  onChange={(e) => {
-                    setRole(e.target.value);
-                  }}
-                  className="mr-2"
-                />
-                Organisation
-              </label>
-            </div>
-          </div>
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-lg">
-          {/* 
-          email  */}
-          <div>
-            <label
-              htmlFor="email"
-              className="block  font-medium text-gray-700"
-            >
-              Email Address
-            </label>
-            <input
-              type="email"
-              id="email"
-              name="email"
-              required
-              placeholder="Enter your email"
-              className=" border  mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
-              value={formData.email}
-              onChange={handleChange}
-            />
-          </div>
-          {/* password  */}
-          <div>
-            <label
-              htmlFor="password"
-              className="block  font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              name="password"
-              required
-              placeholder="Enter password"
-              value={formData.password}
-              onChange={handleChange}
-              className="p-2 border b  mt-1 w-full  shadow-lg shadow-red-100 rounded-lg"
-            />
-          </div>
-          <div className="flex flex-col items-center">
-            <button
-              type="submit"
-              className="w-full bg-red-500 text-white py-2 px-4 rounded-md shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-            >
-              Log In
-            </button>
-             {/* checking new user or existing user */}
-          <div className="flex mt-5">
-            <p>Not Registered Yet ?</p>
-            <Link to='/register' className="text-red-500"> Register Here!</Link>
-          </div>
-          </div>
-         
-        </form>
+    <div className="flex flex-wrap gap-0">
+      <div className="w-full md:w-2/3">
+        <img
+          alt="loginImage"
+          className="w-full h-full object-cover"
+        />
       </div>
-    </div>
-    </div>
+      <div className="w-full md:w-1/3 form-container h-screen flex justify-center items-center">
+        <div className="w-[600px] p-6 bg-white shadow-lg rounded-md">
+          <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
+          <div className="flex items-center justify-center m-5 font-bold text-gray-600 text-lg space-x-4">
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="Donor"
+                onChange={() => handleRoleChange("Donor")}
+                className="mr-2"
+                checked={role === "Donor"}
+              />
+              Donor
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="Admin"
+                onChange={() => handleRoleChange("Admin")}
+                className="mr-2"
+                checked={role === "Admin"}
+              />
+              Admin
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="Hospital"
+                onChange={() => handleRoleChange("Hospital")}
+                className="mr-2"
+                checked={role === "Hospital"}
+              />
+              Hospital
+            </label>
+            <label>
+              <input
+                type="radio"
+                name="role"
+                value="Organisation"
+                onChange={() => handleRoleChange("Organisation")}
+                className="mr-2"
+                checked={role === "Organisation"}
+              />
+              Organisation
+            </label>
+          </div>
+          <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-lg">
+            <div>
+              <label
+                htmlFor="email"
+                className="block font-medium text-gray-700"
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                placeholder="Enter your email"
+                className="border mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                value={formData.email}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div>
+              <label
+                htmlFor="password"
+                className="block font-medium text-gray-700"
+              >
+                Password
+              </label>
+              <input
+                type="password"
+                id="password"
+                name="password"
+                placeholder="Enter password"
+                className="p-2 border mt-1 w-full shadow-lg shadow-red-100 rounded-lg"
+                value={formData.password}
+                onChange={handleChange}
+                required
+              />
+            </div>
+            <div className="flex flex-col items-center">
+              <button
+                type="submit"
+                className="w-full bg-red-500 text-white py-2 px-4 rounded-md shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+              >
+                Log In
+              </button>
+              <div className="flex mt-5">
+                <p>Not Registered Yet?</p>
+                <Link to="/register" className="text-red-500 ml-1">
+                  Register Here!
+                </Link>
+              </div>
+            </div>
+          </form>
+        </div>
+      </div>
     </div>
   );
 };

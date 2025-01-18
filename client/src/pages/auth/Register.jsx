@@ -15,6 +15,7 @@ const Register = () => {
     gender: "",
     bloodGroup: "",
     location: "",
+    role: "Donor", // Initialize role in formData
   });
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -31,12 +32,19 @@ const Register = () => {
       gender: "",
       bloodGroup: "",
       location: "",
+      role: "Donor", // Reset role in formData
     });
+    setRole("Donor"); // Reset role state
   };
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
+  };
+   // Handle role changes
+   const handleRoleChange = (newRole) => {
+    setRole(newRole);
+    setFormData({ ...formData, role: newRole }); // Update role in formData
   };
   return (
     <div>
@@ -69,9 +77,8 @@ const Register = () => {
                   name="role"
                   id="donorRadio"
                   value={"Donor"}
-                  onChange={(e) => {
-                    setRole(e.target.value);
-                  }}
+                 
+                  onChange={() => handleRoleChange("Donor")}
                   className="mr-2"
                   defaultChecked
                 />
@@ -83,9 +90,7 @@ const Register = () => {
                   name="role"
                   id="adminRadio"
                   value={"Admin"}
-                  onChange={(e) => {
-                    setRole(e.target.value);
-                  }}
+                  onChange={() => handleRoleChange("Admin")}
                   className="mr-2"
                 />
                 Admin
@@ -96,9 +101,7 @@ const Register = () => {
                   name="role"
                   id="hospitalRadio"
                   value={"Hospital"}
-                  onChange={(e) => {
-                    setRole(e.target.value);
-                  }}
+                  onChange={() => handleRoleChange("Hospital")}
                   className="mr-2"
                 />
                 Hospital
@@ -109,9 +112,7 @@ const Register = () => {
                   name="role"
                   id="organisationRadio"
                   value={"Organisation"}
-                  onChange={(e) => {
-                    setRole(e.target.value);
-                  }}
+                  onChange={() => handleRoleChange("Organisation")}
                   className="mr-2"
                 />
                 Organisation
@@ -228,7 +229,7 @@ const Register = () => {
               </label>
               <input
                 type="text"
-                name="phonenmuber"
+                name="phoneNumber"
                 value={formData.phoneNumber}
                 placeholder="Enter your contact number"
                 onChange={handleChange}
@@ -292,14 +293,14 @@ const Register = () => {
                 {/* Address */}
                 <div>
                   <label
-                    htmlFor="address"
+                    htmlFor="location"
                     className="block text-sm font-medium text-gray-700"
                   >
                     Address
                   </label>
                   <textarea
-                    id="address"
-                    name="address"
+                    id="location"
+                    name="location"
                     value={formData.location}
                     onChange={handleChange}
                     required
