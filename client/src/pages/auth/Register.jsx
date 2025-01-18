@@ -1,16 +1,17 @@
 import React, { useState } from "react";
-import old from "../../assets/images/old.jpg";
+
+import { Link } from "react-router-dom";
 const Register = () => {
-  const [role, setRole] = useState("donor");
+  const [role, setRole] = useState("Donor");
 
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
     email: "",
-    password:"",
+    password: "",
     phoneNumber: "",
-    hospitalName:"",
-    organisationName:"",
+    hospitalName: "",
+    organisationName: "",
     gender: "",
     bloodGroup: "",
     location: "",
@@ -23,10 +24,10 @@ const Register = () => {
       firstName: "",
       lastName: "",
       email: "",
-      password:"",
+      password: "",
       phoneNumber: "",
-      hospitalName:"",
-      organisationName:"",
+      hospitalName: "",
+      organisationName: "",
       gender: "",
       bloodGroup: "",
       location: "",
@@ -42,7 +43,7 @@ const Register = () => {
       <div className="flex flex-wrap gap-0">
         <div className="w-full md:w-2/3">
           <img
-            src={old}
+            // src={old}
             alt="loginImage"
             className="w-full h-full object-cover"
           />
@@ -119,7 +120,7 @@ const Register = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-3 ">
-            {(role === "Donor" || role === "Admin") && (
+            {role === "Donor" && role === "Admin" && (
               <div>
                 <div>
                   <label
@@ -155,7 +156,7 @@ const Register = () => {
                 </div>
               </div>
             )}
-            {(role === "Hospital") && (
+            {role === "Hospital" && (
               <div>
                 <div>
                   <label
@@ -175,7 +176,7 @@ const Register = () => {
                 </div>
               </div>
             )}
-            {(role === "Organisation") && (
+            {role === "Organisation" && (
               <div>
                 <div>
                   <label
@@ -344,13 +345,20 @@ const Register = () => {
               </div>
             )}
 
-            <div>
+            <div className="flex flex-col justify-center items-center">
               <button
                 type="submit"
                 className="mt-2 w-full bg-red-500 text-white py-2 px-4 rounded-md shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
               >
                 Register as {role}
               </button>
+              <div className="flex mt-5">
+                <p>Already have an account ?</p>
+                <Link to="/login" className="text-red-500">
+                  {" "}
+                  Sign In!
+                </Link>
+              </div>
             </div>
           </form>
         </div>
