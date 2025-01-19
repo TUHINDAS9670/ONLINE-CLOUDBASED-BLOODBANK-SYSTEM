@@ -1,10 +1,14 @@
-import React, { useState } from "react";
+import React, { useState ,useEffect} from "react";
 
 import { Link } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { userRegister } from "../../redux/features/auth/authAction";
+import Spinner from "../../components/shared/Spinner";
+import { toast } from "react-toastify";
+
 
 const Register = () => {
+  const {loading,error}=useSelector((state)=>state.auth);
   const dispatch = useDispatch();
   const [role, setRole] = useState("Donor");
 
@@ -86,8 +90,26 @@ const Register = () => {
     setRole(newRole);
     setFormData({ ...formData, role: newRole }); // Update role in formData
   };
+  useEffect(() => {
+     if (error) {
+       toast.error(error, {
+         position: "top-right",
+         autoClose: 5000,
+         hideProgressBar: false,
+         closeOnClick: true,
+         pauseOnHover: true,
+         draggable: true,
+         theme: "dark",
+       });
+     }
+   }, [error]);
   return (
-    <div>
+    <>
+    {loading ? (
+      <Spinner/>
+    ):(
+      <div>
+      
       <div className="flex flex-wrap gap-0">
         <div className="w-full md:w-2/3">
           <img
@@ -404,6 +426,8 @@ const Register = () => {
         </div>
       </div>
     </div>
+    )}
+    </>
   );
 };
 

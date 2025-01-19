@@ -10,8 +10,20 @@ export const userLogin = createAsyncThunk(
       //store token
       if (data.success) {
         localStorage.setItem("token", data.token);
-        toast.success(data.message);
-        window.location.replace("/");
+        toast.success(data.message, {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: "flip",
+          });
+          setTimeout(() => {
+            window.location.replace("/");
+          }, 1000); // Delay by 1 second
       }
       return data;
     } catch (error) {
@@ -59,8 +71,21 @@ export const userRegister = createAsyncThunk(
         bloodGroup,
       });
       if (data && data.success) {
-        toast.success("Account Created Successfully");
-        window.location.replace("/login");
+        toast.success("Account created Successfully", {
+          position: "top-right",
+          autoClose: 5000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+          transition: "flip",
+          });
+        setTimeout(() => {
+          window.location.replace("/login");
+        }, 500); // Delay by 0.5 second
+      
       }
       return data;
     } catch (error) {

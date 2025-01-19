@@ -1,9 +1,12 @@
-import React, { useState } from "react";
+import React, { useState,useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { userLogin } from "../../redux/features/auth/authAction";
-
+import { useSelector } from "react-redux";
+import Spinner from "../../components/shared/Spinner";
+import { ToastContainer, toast } from 'react-toastify';
 export const Login = () => {
+  const { loading, error } = useSelector(state=> state.auth);
   const dispatch = useDispatch(); // Initialize dispatch
   const [role, setRole] = useState("Donor"); // Separate state for role
   const [formData, setFormData] = useState({
@@ -42,9 +45,25 @@ export const Login = () => {
     });
     setRole("Donor"); // Reset role state
   };
-
+  useEffect(() => {
+    if (error) {
+      toast.error(error, {
+        position: "top-right",
+        autoClose: 5000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "dark",
+      });
+    }
+  }, [error]);
   return (
-    <div className="flex flex-wrap gap-0">
+    <>
+    
+    
+     {loading ? <Spinner/>: (
+      <div className="flex flex-wrap gap-0">
       <div className="w-full md:w-2/3">
         <img alt="loginImage" className="w-full h-full object-cover" />
       </div>
@@ -97,7 +116,10 @@ export const Login = () => {
               Organisation
             </label>
           </div>
-          <form onSubmit={handleSubmit} className="flex flex-col gap-4 text-lg">
+          <form
+            onSubmit={handleSubmit}
+            className="flex flex-col gap-4 text-lg"
+          >
             <div>
               <label
                 htmlFor="email"
@@ -152,5 +174,8 @@ export const Login = () => {
         </div>
       </div>
     </div>
+    )}
+      
+    </>
   );
 };
