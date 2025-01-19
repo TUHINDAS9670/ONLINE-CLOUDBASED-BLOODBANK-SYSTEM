@@ -1,0 +1,33 @@
+.active{
+  @apply text-orange-500 underline underline-offset-4 transition-all duration-150 ease-linear
+}
+.pagination{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+}
+.pagination li{
+  margin: 0 5px;
+}
+.pagination a{
+  display: inline-block;
+  padding: 5px 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  text-decoration: none;
+  color : black;
+}
+.pagination a:hover{
+  background-color: aliceblue;
+}
+.pagination li.activePagination{
+  background-color: rgb(255, 119, 7);
+  border-radius: 4px;
+  color: white;
+}
+.active-button{
+  color:rgb(255, 77, 7);
+}

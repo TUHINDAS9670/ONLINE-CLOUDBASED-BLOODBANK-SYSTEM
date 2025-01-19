@@ -1,6 +1,7 @@
 import React ,{useEffect} from 'react'
 import { useSelector } from 'react-redux'
 import Spinner from '../components/shared/Spinner'
+import Layout from '../components/shared/layout/Layout'
 
 const HomePage = () => {
   const{loading,error}=useSelector(state => state.auth)
@@ -18,7 +19,8 @@ const HomePage = () => {
       }
     }, [error]);
   return (
-    <div>
+   <Layout>
+     <div>
       
       {loading ? (<Spinner/> ):(
         <>
@@ -27,6 +29,7 @@ const HomePage = () => {
       )}
     
     </div>
+   </Layout>
   )
 }
 
