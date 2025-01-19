@@ -1,30 +1,49 @@
-import { createSlice } from '@reduxjs/toolkit'
+import { createSlice } from "@reduxjs/toolkit";
+import { userLogin, userRegister } from "./authAction";
+const token = localStorage.getItem("token")
+  ? localStorage.getItem("token")
+  : null;
 
 const initialState = {
   loading: false,
   user: null,
-  error: null
-}
+  token,
+  error: null,
+};
 
 const authSlice = createSlice({
   name: "auth",
   initialState,
   reducers: {},
   extraReducers: (builder) => {
-    // Example of how you would handle an async action or an additional reducer
-    builder
-      .addCase('someAsyncAction/pending', (state) => {
-        state.loading = true;
-      })
-      .addCase('someAsyncAction/fulfilled', (state, action) => {
-        state.loading = false;
-        state.user = action.payload;
-      })
-      .addCase('someAsyncAction/rejected', (state, action) => {
-        state.loading = false;
-        state.error = action.error.message;
-      })
+    //loginuser
+    builder.addCase(userLogin.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(userLogin.fulfilled, (state, { payload }) => {
+      state.loading = false;
+      state.user = payload.user;
+      state.token = payload.token;
+    });
+    builder.addCase(userLogin.rejected, (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
+    });
+    //register user
+    builder.addCase(userRegister.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(userRegister.fulfilled, (state, { payload }) => {
+      state.loading = false;
+      state.user = payload.user;
+    });
+    builder.addCase(userRegister.rejected, (state, { payload }) => {
+      state.loading = false;
+      state.error = payload;
+    });
   },
-})
+});
 
-export default authSlice
+export default authSlice;

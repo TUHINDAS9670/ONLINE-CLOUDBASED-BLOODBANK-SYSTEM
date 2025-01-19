@@ -4,22 +4,22 @@ const userSchema = new mongoose.Schema(
     role: {
       type: String,
       required: [true, "role is required"],
-      enum: ["admin", "organisation", "donor", "hospital"],
+      enum: ["Admin", "Organisation", "Donor", "Hospital"],
     },
     name: {
       type: String,
       required: function () {
-        if (this.role === "user" || this.role === "admin") {
+        if (this.role === "User" || this.role === "Admin") {
           return true;
         } else {
           return false;
         }
       },
     },
-    organisation: {
+    organisationName: {
       type: String,
       required: function () {
-        if (this.role === "organisation") {
+        if (this.role === "Organisation") {
           return true;
         } else {
           return false;
@@ -29,7 +29,7 @@ const userSchema = new mongoose.Schema(
     hospitalName: {
       type: String,
       required: function () {
-        if (this.role === "hospital") {
+        if (this.role === "Hospital") {
           return true;
         } else {
           return false;
@@ -45,13 +45,13 @@ const userSchema = new mongoose.Schema(
       type: String,
       require: [true, "password is required"],
     },
-    address: {
+    location: {
       type: String,
       required: [true, "address is required"],
     },
-    phone: {
+    phoneNumber: {
       type: String,
-      required: [true, "phone numberis required"],
+      required: [true, "phone number is required"],
     },
   },
   { timestamps: true }

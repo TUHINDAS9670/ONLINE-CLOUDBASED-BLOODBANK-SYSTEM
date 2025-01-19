@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 
 import { Link } from "react-router-dom";
+import { useDispatch } from "react-redux";
+import { userRegister } from "../../redux/features/auth/authAction";
+
 const Register = () => {
+  const dispatch = useDispatch();
   const [role, setRole] = useState("Donor");
 
   const [formData, setFormData] = useState({
@@ -19,8 +23,44 @@ const Register = () => {
   });
   const handleSubmit = (e) => {
     e.preventDefault();
+    const {
+      firstName,
+      lastName,
+      email,
+      password,
+      phoneNumber,
+      hospitalName,
+      organisationName,
+      gender,
+      bloodGroup,
+      location,
+      age,
+      role,
+    } = formData;
+  
     console.log("Form submitted", formData);
-    alert("Thank you! for Register");
+    // alert("Thank you! for Register");
+    try {
+      dispatch(
+        userRegister({
+          firstName,
+          lastName,
+          role,
+          email,
+          password,
+          location,
+          age,
+          gender,
+          phoneNumber,
+          hospitalName,
+          organisationName,
+          bloodGroup,
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      
+    }
     setFormData({
       firstName: "",
       lastName: "",
@@ -41,8 +81,8 @@ const Register = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
-   // Handle role changes
-   const handleRoleChange = (newRole) => {
+  // Handle role changes
+  const handleRoleChange = (newRole) => {
     setRole(newRole);
     setFormData({ ...formData, role: newRole }); // Update role in formData
   };
@@ -77,7 +117,6 @@ const Register = () => {
                   name="role"
                   id="donorRadio"
                   value={"Donor"}
-                 
                   onChange={() => handleRoleChange("Donor")}
                   className="mr-2"
                   defaultChecked
@@ -121,7 +160,7 @@ const Register = () => {
           </div>
 
           <form onSubmit={handleSubmit} className="flex flex-col gap-3 ">
-            {role === "Donor" && role === "Admin" && (
+            {(role === "Donor" || role === "Admin") && (
               <div>
                 <div>
                   <label
@@ -157,7 +196,7 @@ const Register = () => {
                 </div>
               </div>
             )}
-            {role === "Hospital" && (
+            {(role === "Hospital") && (
               <div>
                 <div>
                   <label
@@ -177,7 +216,7 @@ const Register = () => {
                 </div>
               </div>
             )}
-            {role === "Organisation" && (
+            {(role === "Organisation") && (
               <div>
                 <div>
                   <label
@@ -188,7 +227,7 @@ const Register = () => {
                   </label>
                   <input
                     type="text"
-                    name="organisationlName"
+                    name="organisationName"
                     value={formData.organisationName}
                     placeholder="Enter Organisation Name"
                     onChange={handleChange}
@@ -236,9 +275,9 @@ const Register = () => {
                 className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
               />
             </div>
-            {role !== "Admin" &&
+            {(role !== "Admin" &&
               role !== "Hospital" &&
-              role !== "Organisation" && (
+              role !== "Organisation" )&& (
                 <div>
                   {/* blood group */}
                   <div>
@@ -288,10 +327,8 @@ const Register = () => {
                   </div>
                 </div>
               )}
-            {(role === "Admin" || role === "Donor") && (
-              <div>
-                {/* Address */}
-                <div>
+               {/* Address */}
+               <div>
                   <label
                     htmlFor="location"
                     className="block text-sm font-medium text-gray-700"
@@ -308,6 +345,9 @@ const Register = () => {
                     className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg resize-none "
                   ></textarea>
                 </div>
+            {(role === "Admin" || role === "Donor") && (
+              <div>
+               
                 <label
                   htmlFor="gender"
                   className="block font-semibold text-gray-700"
@@ -356,7 +396,6 @@ const Register = () => {
               <div className="flex mt-5">
                 <p>Already have an account ?</p>
                 <Link to="/login" className="text-red-500">
-                  {" "}
                   Sign In!
                 </Link>
               </div>

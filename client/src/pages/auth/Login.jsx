@@ -1,7 +1,10 @@
 import React, { useState } from "react";
+import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { userLogin } from "../../redux/features/auth/authAction";
 
 export const Login = () => {
+  const dispatch = useDispatch(); // Initialize dispatch
   const [role, setRole] = useState("Donor"); // Separate state for role
   const [formData, setFormData] = useState({
     email: "",
@@ -20,14 +23,18 @@ export const Login = () => {
   };
 
   const handleSubmit = (e) => {
-    // if(!formData.email || !formData.password|| formData.role){
-    //   return(
-    //     alert("please provide all fields")
-    //   )
-    // }
     e.preventDefault();
-    console.log("Login Details:", formData); // Debugging log
-    alert("Login Successfully!");
+    const { email, password, role } = formData;
+
+    // Validation
+    if (!email || !password || !role) {
+      return alert("Please provide all fields.");
+    }
+
+    // Dispatch the login action
+    dispatch(userLogin({ email, password, role }));
+
+    // Clear the form after submission
     setFormData({
       email: "",
       password: "",
@@ -39,10 +46,7 @@ export const Login = () => {
   return (
     <div className="flex flex-wrap gap-0">
       <div className="w-full md:w-2/3">
-        <img
-          alt="loginImage"
-          className="w-full h-full object-cover"
-        />
+        <img alt="loginImage" className="w-full h-full object-cover" />
       </div>
       <div className="w-full md:w-1/3 form-container h-screen flex justify-center items-center">
         <div className="w-[600px] p-6 bg-white shadow-lg rounded-md">
