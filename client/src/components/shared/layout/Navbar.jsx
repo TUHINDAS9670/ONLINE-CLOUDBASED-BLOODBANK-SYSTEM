@@ -1,18 +1,17 @@
 import React, { useState } from "react";
 import "../../../App.css";
 import { NavLink } from "react-router";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 // react icons
 import { FaBars, FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { MdBloodtype } from "react-icons/md";
 
 import { MdMenuOpen } from "react-icons/md";
-import {useSelector} from "react-redux"
+import { useSelector } from "react-redux";
 // import Modal from'./Modal'
 
 const Navbar = () => {
-
-  const {user} =useSelector(state => state.auth)
+  const { user } = useSelector((state) => state.auth);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   //usestate for loginmodal
   // const[isModalOpen,setIsModalOpen]=useState(false)
@@ -26,21 +25,21 @@ const Navbar = () => {
   //   { path: "/contactus", link: "ContactUs" },
   //   { path: "/about", link: "About" },
   //   { path: "/services", link: "Services" },
-  
+
   // ];
   //logout handler
-  const navigate=useNavigate()
-  const handleLogOut=()=>{
-    localStorage.clear()
-    alert("Logout successfully !")
-    navigate('/login')
-  }
-  
+  const navigate = useNavigate();
+  const handleLogOut = () => {
+    localStorage.clear();
+    alert("Logout successfully !");
+    navigate("/login");
+  };
+
   return (
     <header className="bg-black text-white fixed top-0 left-0 right-0 ">
       <nav className="px-2 py-4 max-w-7xl mx-auto flex justify-between items-center">
         <a href="/" className="text-4xl font-bold text-red-500">
-        <MdBloodtype/>
+          <MdBloodtype />
           BLOOD BANK <span className="text-white ml-3">APP</span>
         </a>
         {/* nav items for lg devices */}
@@ -56,14 +55,25 @@ const Navbar = () => {
             </li>
           ))} */}
           <li>
-            <p className="text-white mt-2">Welcome 
-              {user?.firstName}
+            <p className="text-white ">
+              Welcome{" "}
+              <span className="font-semibold text-3xl">
+                {" "}
+                {user?.name || user?.hospitalName || user?.organisationName}
+              </span>
+              &nbsp;
+              <span className="bg-slate-400 p-2 rounded-lg text-black">
+                {user?.role}
+              </span>
             </p>
           </li>
           <li>
-          <button className="text-white hover:text-red-400 bg-red-600 font-bold rounded-lg px-6 py-2 hover:bg-slate-50 transition-all duration-150 ease-in" onClick={handleLogOut}>
-            Log Out
-          </button>
+            <button
+              className="text-white hover:text-red-400 bg-red-600 font-bold rounded-lg px-6 py-2 hover:bg-slate-50 transition-all duration-150 ease-in"
+              onClick={handleLogOut}
+            >
+              Log Out
+            </button>
           </li>
         </ul>
         {/* Menu icons */}
@@ -80,7 +90,6 @@ const Navbar = () => {
          
         </div> */}
         {/* Modal component is here */}
-       
 
         {/* mobile menu btn , diplay in mobile screen */}
         <div className="md:hidden ">

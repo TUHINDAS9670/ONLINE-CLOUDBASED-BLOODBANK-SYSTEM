@@ -11,7 +11,7 @@ const authMiddleware=async(req,res,next)=>{
         })
       }
       else{
-        req.body.userId=decode.id;
+        req.body.userId=decode.userId;
         next();
       }
     })

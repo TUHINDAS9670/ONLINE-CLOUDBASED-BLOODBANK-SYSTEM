@@ -366,6 +366,7 @@ const Register = () => {
                     placeholder="Enter your address"
                     className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg resize-none "
                   ></textarea>
+                  
                 </div>
             {(role === "Admin" || role === "Donor") && (
               <div>

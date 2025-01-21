@@ -10,9 +10,9 @@ const createInventoryController=async(req,res)=>{
       if(!user){
         throw new Error ('User Not Found')
       }
-      if(inventoryType==="in" && user.role !=='donor'){
-        throw new Error ('Not a donor account')
-      }
+      // if(inventoryType==="in" && user.role !=='donor'){
+      //   throw new Error ('Not a donor account')
+      // }
       if(inventoryType ==="out" && user.role !== 'hospital')
       {
         throw new ErrorEvent('Not a hospital')
@@ -29,7 +29,7 @@ const createInventoryController=async(req,res)=>{
       return res.status(500).send({
         success:false,
         message:'Error In Create Inventory API',
-        error
+        error:error
       })
       
     }
@@ -37,12 +37,12 @@ const createInventoryController=async(req,res)=>{
 
 const getInventoryController=async(req,res)=>{
   try {
-    const inventory=await inventoryModel.find({organisation:req.body.organisation}).populate("donor").populate("hospital").sort({createdAt:-1})
+    const inventory=await inventoryModel.find({organisation:req.body.userId}).populate("donor").populate("hospital").sort({createdAt:-1})
     //.populate method to show donor and hospital details with this request which donor do the request etc...
     return res.status(200).send({
       success:true,
       message:"get all records successfully",
-      inventory
+      inventory,
     })
   } catch (error) {
     console.log(error);

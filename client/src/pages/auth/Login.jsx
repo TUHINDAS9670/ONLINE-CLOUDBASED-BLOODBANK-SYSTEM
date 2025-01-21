@@ -65,7 +65,7 @@ export const Login = () => {
      {loading ? <Spinner/>: (
       <div className="flex flex-wrap gap-0">
       <div className="w-full md:w-2/3">
-        <img alt="loginImage" className="w-full h-full object-cover" />
+        {/* <img alt="loginImage" className="w-full h-full object-cover" /> */}
       </div>
       <div className="w-full md:w-1/3 form-container h-screen flex justify-center items-center">
         <div className="w-[600px] p-6 bg-white shadow-lg rounded-md">

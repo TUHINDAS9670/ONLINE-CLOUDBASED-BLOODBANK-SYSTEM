@@ -5,8 +5,8 @@ import { Navigate } from 'react-router-dom';
 import API from '../../services/API';
 
 const ProtectedRoute = ({ children }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState(false); // Track auth status
-  const [loading, setLoading] = useState(true); // Track loading state
+  // Track auth status
+ // Track loading state
   const dispatch = useDispatch();
 
   // Fetch current user
