@@ -22,49 +22,76 @@ const Register = () => {
     organisationName: "",
     gender: "",
     bloodGroup: "",
+    age:"",
     location: "",
     role: "Donor", // Initialize role in formData
   });
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   const formData= {
+  //     firstName,
+  //     lastName,
+  //     email,
+  //     password,
+  //     phoneNumber,
+  //     hospitalName,
+  //     organisationName,
+  //     gender,
+  //     bloodGroup,
+  //     location,
+  //     age,
+  //     role,
+  //   } ;
+  
+  //   console.log("Form submitted", formData);
+  //   // alert("Thank you! for Register");
+  //   try {
+  //     dispatch(
+  //       userRegister({
+  //         // name: `${firstName} ${lastName}`.trim(), // ✅ Combine first & last name
+  //         firstName,
+  //         lastName,
+  //         role,
+  //         email,
+  //         password,
+  //         location,
+  //         age,
+  //         gender,
+  //         phoneNumber,
+  //         hospitalName,
+  //         organisationName,
+  //         bloodGroup,
+  //       })
+  //     );
+  //   } catch (error) {
+  //     console.log(error);
+      
+  //   }
+  //   setFormData({
+  //     firstName: "",
+  //     lastName: "",
+  //     email: "",
+  //     password: "",
+  //     phoneNumber: "",
+  //     hospitalName: "",
+  //     organisationName: "",
+  //     gender: "",
+  //     bloodGroup: "",
+  //     location: "",
+  //     role: "Donor", // Reset role in formData
+  //   });
+  //   setRole("Donor"); // Reset role state
+  // };
   const handleSubmit = (e) => {
     e.preventDefault();
-    const {
-      firstName,
-      lastName,
-      email,
-      password,
-      phoneNumber,
-      hospitalName,
-      organisationName,
-      gender,
-      bloodGroup,
-      location,
-      age,
-      role,
-    } = formData;
-  
     console.log("Form submitted", formData);
-    // alert("Thank you! for Register");
     try {
-      dispatch(
-        userRegister({
-          firstName,
-          lastName,
-          role,
-          email,
-          password,
-          location,
-          age,
-          gender,
-          phoneNumber,
-          hospitalName,
-          organisationName,
-          bloodGroup,
-        })
-      );
+      dispatch(userRegister(formData)); // use the state directly
     } catch (error) {
       console.log(error);
-      
     }
+  
+    // Reset the form
     setFormData({
       firstName: "",
       lastName: "",
@@ -76,10 +103,11 @@ const Register = () => {
       gender: "",
       bloodGroup: "",
       location: "",
-      role: "Donor", // Reset role in formData
+      role: "Donor",
     });
-    setRole("Donor"); // Reset role state
+    setRole("Donor");
   };
+  
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -384,6 +412,8 @@ const Register = () => {
                       name="gender"
                       value="male"
                       className="mr-2"
+                      onChange={handleChange}
+                      checked={formData.gender === "male"}
                     />
                     Male
                   </label>
@@ -393,6 +423,8 @@ const Register = () => {
                       name="gender"
                       value="female"
                       className="mr-2"
+                      onChange={handleChange}
+                      checked={formData.gender === "female"}
                     />
                     Female
                   </label>
@@ -402,6 +434,8 @@ const Register = () => {
                       name="gender"
                       value="others"
                       className="mr-2"
+                      onChange={handleChange}
+                      checked={formData.gender === "others"}
                     />
                     others
                   </label>

@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import "../../../App.css";
 import { NavLink } from "react-router";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,useLocation,Link } from "react-router-dom";
 // react icons
 import { FaBars, FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 import { MdBloodtype } from "react-icons/md";
@@ -11,14 +11,16 @@ import { useSelector } from "react-redux";
 // import Modal from'./Modal'
 
 const Navbar = () => {
-  const { user } = useSelector((state) => state.auth);
+  const  {user}  = useSelector((state) => state.auth);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const location=useLocation();
   //usestate for loginmodal
   // const[isModalOpen,setIsModalOpen]=useState(false)
 
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
   // const navItems = [
   //   { path: "/", link: "Home" },
   //   { path: "/blogs", link: "Blogs" },
@@ -59,7 +61,7 @@ const Navbar = () => {
               Welcome{" "}
               <span className="font-semibold text-3xl">
                 {" "}
-                {user?.name || user?.hospitalName || user?.organisationName}
+                { user?.name||user?.hospitalName || user?.organisationName }
               </span>
               &nbsp;
               <span className="bg-slate-400 p-2 rounded-lg text-black">
@@ -67,6 +69,21 @@ const Navbar = () => {
               </span>
             </p>
           </li>
+          {
+            location.pathname ==="/" ? (
+              <li>
+              <Link to="/analytics" className="text-white ">
+               Analytics
+              
+              </Link>
+            </li>
+            ):(<li>
+              <Link to="/" className="text-white ">
+               Home
+              
+              </Link>
+            </li>)
+          }
           <li>
             <button
               className="text-white hover:text-red-400 bg-red-600 font-bold rounded-lg px-6 py-2 hover:bg-slate-50 transition-all duration-150 ease-in"

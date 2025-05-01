@@ -20,10 +20,10 @@ export const userLogin = createAsyncThunk(
           progress: undefined,
           theme: "dark",
           transition: "flip",
-          });
-          setTimeout(() => {
-            window.location.replace("/");
-          }, 1000); // Delay by 1 second
+        });
+        setTimeout(() => {
+          window.location.replace("/");
+        }, 1000); // Delay by 1 second
       }
       return data;
     } catch (error) {
@@ -56,9 +56,11 @@ export const userRegister = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
+      const name = `${firstName} ${lastName}`.trim(); // ✅ Combine into `name`
       const { data } = await API.post("/auth/register", {
         firstName,
         lastName,
+        name,
         role,
         email,
         password,
@@ -81,11 +83,10 @@ export const userRegister = createAsyncThunk(
           progress: undefined,
           theme: "dark",
           transition: "flip",
-          });
+        });
         setTimeout(() => {
           window.location.replace("/login");
         }, 500); // Delay by 0.5 second
-      
       }
       return data;
     } catch (error) {

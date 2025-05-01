@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import InputType from "./InputType";
 import API from "../../../services/API";
+// import API from "../../../services/API";
 import { useSelector } from "react-redux";
 
 const Modal = ({ isOpen, onClose}) => {
@@ -9,7 +10,7 @@ const Modal = ({ isOpen, onClose}) => {
   const [inventoryType, setInventoryType] = useState("in");
   const [bloodGroup, setBloodGroup] = useState("");
   const [quantity, setQuantity] = useState(0);
-  const [donorEmail, setDonorEmail] = useState("");
+  const [email, setEmail] = useState("");
   // handle modal data
   const handleModalSubmit = async () => {
     try {
@@ -17,8 +18,8 @@ const Modal = ({ isOpen, onClose}) => {
         return alert("Please Provide All Fields");
       }
       const { data } = await API.post("/inventory/create-inventory", {
-        donorEmail,
-        email:user?.email,
+       
+        email,
         organisation: user?._id,
         inventoryType,
         bloodGroup,
@@ -100,10 +101,10 @@ const Modal = ({ isOpen, onClose}) => {
 
           <InputType
             labelText={"Donar Email"}
-            labelFor={"donarEmail"}
+            labelFor={"email"}
             inputType={"email"}
-            value={donorEmail}
-            onChange={(e) => setDonorEmail(e.target.value)}
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             className="mt-4 block w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
           />
 
