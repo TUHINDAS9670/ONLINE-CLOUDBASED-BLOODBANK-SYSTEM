@@ -71,7 +71,7 @@ const HospitalList = () => {
                             {record.phoneNumber}
                           </td>
                           <td className="px-4 py-2 border-b">
-                            {record.location}
+                            {record.location?.full}
                           </td>
                           <td className="px-4 py-2 border-b">
                             {moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}

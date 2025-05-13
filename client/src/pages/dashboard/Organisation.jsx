@@ -57,7 +57,7 @@ const Organisation = () => {
                 <td className="px-4 py-2 border-b">{record.email}</td>
 
                 <td className="px-4 py-2 border-b">{record.phoneNumber}</td>
-                <td className="px-4 py-2 border-b">{record.location}</td>
+                <td className="px-4 py-2 border-b">{record.location?.full}</td>
                 <td className="px-4 py-2 border-b">
                   {moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}
                 </td>

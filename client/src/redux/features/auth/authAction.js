@@ -56,7 +56,8 @@ export const userRegister = createAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      const name = `${firstName} ${lastName}`.trim(); // ✅ Combine into `name`
+      const name = `${firstName} ${lastName}`.trim();
+
       const { data } = await API.post("/auth/register", {
         firstName,
         lastName,
@@ -64,7 +65,7 @@ export const userRegister = createAsyncThunk(
         role,
         email,
         password,
-        location,
+        location:location,
         age,
         gender,
         phoneNumber,
@@ -72,6 +73,7 @@ export const userRegister = createAsyncThunk(
         organisationName,
         bloodGroup,
       });
+      
       if (data && data.success) {
         toast.success("Account created Successfully", {
           position: "top-right",

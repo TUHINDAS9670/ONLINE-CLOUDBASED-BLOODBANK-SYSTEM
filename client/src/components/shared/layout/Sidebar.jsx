@@ -9,7 +9,6 @@ import { BsPeopleFill } from "react-icons/bs";
 import { IoIosPeople } from "react-icons/io";
 import { FaHospital } from "react-icons/fa6";
 
-
 import { useSelector } from "react-redux";
 const Sidebar = () => {
   // GET USER STATE
@@ -59,6 +58,19 @@ const Sidebar = () => {
                   Hospital
                 </Link>
               </div>
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/organisation/donation-requests"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <FaHospitalAlt className="lg:w-[80px] lg:h-[30px]  " />
+
+                <Link to="/organisation/donation-requests" className="font-bold ml-[-22px]">
+                  Donation Requests
+                </Link>
+              </div>
             </>
           )}
           {user?.role === "Admin" && (
@@ -82,7 +94,7 @@ const Sidebar = () => {
                     : "bg-gray-200 text-black"
                 }`}
               >
-                <FaHospital  className="lg:w-[80px] lg:h-[30px]  " />
+                <FaHospital className="lg:w-[80px] lg:h-[30px]  " />
 
                 <Link to="/hospital-list" className="font-bold ml-[-22px]">
                   Hospital List
@@ -137,19 +149,42 @@ const Sidebar = () => {
           )}
 
           {user?.role === "Donor" && (
-            <div
-              className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
-                location.pathname === "/donation-list"
-                  ? "bg-red-500 text-white "
-                  : "bg-gray-200 text-black"
-              }`}
-            >
-              <BsPeopleFill className="lg:w-[80px] lg:h-[30px]  " />
+            <>
+              {" "}
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/donation-list"
+                    ? "bg-red-500 text-white "
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <BsPeopleFill className="lg:w-[80px] lg:h-[30px]  " />
 
-              <Link to="/donation-list" className="font-bold ml-[-22px]">
-                Donation History
-              </Link>
-            </div>
+                <Link to="/donation-list" className="font-bold ml-[-22px]">
+                  Donation History
+                </Link>
+              </div>
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/donation-request"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <BiDonateBlood className="lg:w-[80px] lg:h-[30px]" />
+                <Link to="/donation-request" className="font-bold ml-[-22px]">
+                  Donation Request
+                </Link>
+                
+              </div>
+              <div>
+                <BiDonateBlood className="lg:w-[80px] lg:h-[30px]" />
+               
+                <Link to="/donor-dashboard" className="font-bold ml-[-22px]">
+                Dashboard
+                </Link>
+              </div>
+            </>
           )}
 
           {/* {userMenu.map((menu) => {

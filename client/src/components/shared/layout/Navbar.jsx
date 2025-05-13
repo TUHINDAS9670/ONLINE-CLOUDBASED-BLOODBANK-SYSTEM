@@ -41,7 +41,7 @@ const Navbar = () => {
     <header className="bg-black text-white fixed top-0 left-0 right-0 ">
       <nav className="px-2 py-4 max-w-7xl mx-auto flex justify-between items-center">
         <a href="/" className="text-4xl font-bold text-red-500">
-          <MdBloodtype />
+          <MdBloodtype/>
           BLOOD BANK <span className="text-white ml-3">APP</span>
         </a>
         {/* nav items for lg devices */}

@@ -7,11 +7,12 @@ const authMiddleware=async(req,res,next)=>{
       if(err){
         return res.status(401).send({
           success:false,
-          messagge:'Auth failed'
+          message:'Auth failed'
         })
       }
       else{
         req.body.userId=decode.userId;
+        // req.user = decode;
         next();
       }
     })

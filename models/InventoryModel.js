@@ -17,7 +17,7 @@ quantity:{
   required:[true,'blood quantity is required']
 },
 
-donorEmail:{
+email:{
 type:String,
 required:[true,"Donor Email is Required"]
 },
@@ -38,9 +38,9 @@ hospital:{
 donor:{
   type:mongoose.Schema.Types.ObjectId,
   ref:'users',
-  // required:function(){
-  //   return this.inventoryType=='in'
-  // }
+  required:function(){
+    return this.inventoryType=='in'
+  }
 },
 },{timestamps:true})
 module.exports=mongoose.model('inventory',InventoryModel)

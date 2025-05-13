@@ -1,5 +1,4 @@
 import { Routes, Route } from "react-router-dom";
-import HomePage from "./pages/HomePage";
 import { Login } from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import { ToastContainer } from "react-toastify";
@@ -11,10 +10,17 @@ import Organisation from "./pages/dashboard/Organisation";
 import Consumer from "./pages/dashboard/Consumer";
 import DonationHistory from "./pages/dashboard/DonationHistory";
 import Analytics from "./pages/Analytics";
-import DonorList from"../src/pages/admin/DonorList"
-import HospitalList from"../src/pages/admin/HospitalList"
-import OrganisationList from"../src/pages/admin/OrganisationList"
+import DonorList from "../src/pages/admin/DonorList";
+import HospitalList from "../src/pages/admin/HospitalList";
+import OrganisationList from "../src/pages/admin/OrganisationList";
 import AdminHomePage from "./pages/admin/AdminHomePage";
+
+import DonationRequestPage from "./pages/dashboard/DonationRequestPage";
+import DonorDashboard from "./pages/dashboard/DonorDashboard";
+import OrganisationRequestsPage from "./pages/dashboard/OrganisationRequestsPage";
+import HomePageUserBased from "./pages/HomePageUserBased";
+import HomePage from "./pages/HomePage";
+import NearbyHospitals from "./pages/NoUser/NearbyHospitalAndBloodbanks";
 
 function App() {
   return (
@@ -26,7 +32,7 @@ function App() {
             path="/"
             element={
               <ProtectedRoute>
-                <HomePage/>
+                < HomePageUserBased />
               </ProtectedRoute>
             }
           />
@@ -34,7 +40,7 @@ function App() {
             path="/analytics"
             element={
               <ProtectedRoute>
-                <Analytics/>
+                <Analytics />
               </ProtectedRoute>
             }
           />
@@ -42,7 +48,7 @@ function App() {
             path="/donor"
             element={
               <ProtectedRoute>
-                <Donor/>
+                <Donor />
               </ProtectedRoute>
             }
           />
@@ -50,7 +56,7 @@ function App() {
             path="/donation-list"
             element={
               <ProtectedRoute>
-                <DonationHistory/>
+                <DonationHistory />
               </ProtectedRoute>
             }
           />
@@ -58,7 +64,7 @@ function App() {
             path="/hospital"
             element={
               <ProtectedRoute>
-                <Hospital/>
+                <Hospital />
               </ProtectedRoute>
             }
           />
@@ -66,7 +72,7 @@ function App() {
             path="/consumer"
             element={
               <ProtectedRoute>
-                <Consumer/>
+                <Consumer />
               </ProtectedRoute>
             }
           />
@@ -74,7 +80,7 @@ function App() {
             path="/organisation"
             element={
               <ProtectedRoute>
-                <Organisation/>
+                <Organisation />
               </ProtectedRoute>
             }
           />
@@ -82,7 +88,7 @@ function App() {
             path="/donor-list"
             element={
               <ProtectedRoute>
-                <DonorList/>
+                <DonorList />
               </ProtectedRoute>
             }
           />
@@ -90,7 +96,7 @@ function App() {
             path="/hospital-list"
             element={
               <ProtectedRoute>
-                <HospitalList/>
+                <HospitalList />
               </ProtectedRoute>
             }
           />
@@ -98,7 +104,7 @@ function App() {
             path="/org-list"
             element={
               <ProtectedRoute>
-                <OrganisationList/>
+                <OrganisationList />
               </ProtectedRoute>
             }
           />
@@ -106,7 +112,15 @@ function App() {
             path="/admin"
             element={
               <ProtectedRoute>
-                <AdminHomePage/>
+                <AdminHomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/organisation/donation-requests"
+            element={
+              <ProtectedRoute>
+                <OrganisationRequestsPage />
               </ProtectedRoute>
             }
           />
@@ -127,6 +141,49 @@ function App() {
               </PublicRoute>
             }
           />
+          <Route
+            path="/homepage"
+            element={
+              <PublicRoute>
+                <HomePage/>
+              </PublicRoute>
+            }
+          />
+
+          <Route
+            path="/donation-request"
+            element={
+              <ProtectedRoute>
+                <DonationRequestPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/adminHome"
+            element={
+              <ProtectedRoute>
+                <AdminHomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/donor-dashboard"
+            element={
+              <ProtectedRoute>
+                <DonorDashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/nearby-hospitals"
+            element={
+              <PublicRoute>
+                <NearbyHospitals/>
+              </PublicRoute>
+            }
+          />
+         
+
         </Routes>
       </div>
     </>

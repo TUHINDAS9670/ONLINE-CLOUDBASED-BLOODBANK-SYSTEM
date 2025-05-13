@@ -22,3 +22,38 @@
     transform:rotate(360deg)
   }
  }
+/* Smooth animated background */
+.bg-animate {
+  background-size: 400% 400%;
+  animation: gradientMove 20s ease infinite;
+}
+
+@keyframes gradientMove {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+/* Custom cursor (fallback to auto if missing) */
+body {
+  cursor: url('/cursor-red.png'), auto;
+}
+@layer utilities {
+  .animate-spin-slow {
+    animation: spin 20s linear infinite;
+  }
+
+  .animate-marquee {
+    animation: marquee 25s linear infinite;
+  }
+
+  @keyframes marquee {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+}
+

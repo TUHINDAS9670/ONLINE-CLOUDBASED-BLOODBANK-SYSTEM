@@ -16,7 +16,67 @@ const registerController=async(req,res)=>{
     const hashPassword=await bcrypt.hash(req.body.password,salt);
     req.body.password=hashPassword
     //reset data
-    const user=new userModel(req.body)
+    // const user=new userModel(req.body)
+   
+    const {
+      name,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      role,
+      organisationName,
+      hospitalName,
+      bloodGroup,
+      location,
+    } = req.body;
+       // Compose name
+      //  const fullName =
+      //  role === "Donor" || role === "Admin" || role === "User"
+      //    ? `${firstName} ${lastName}`.trim()
+      //    : undefined;
+        // Create user
+        const user = new userModel({
+          name: name?.trim() ||'',
+
+          firstName,
+          lastName,
+          email:email,
+          password: hashPassword,
+          phoneNumber:phoneNumber,
+          role:role,
+          organisationName: organisationName || '',
+          hospitalName: hospitalName || '',
+          bloodGroup: bloodGroup || '',
+          // location: {
+          //   country: address?.country || '',
+          //   state: address?.state || '',
+          //   district: address?.district || '',
+          //   city: address?.city || '',
+          //   location: address?.location || '',
+          //   full: address?.full || '',
+          // },
+          location:location || ''
+        });
+    
+    
+// const userData = {
+//   name,
+//   email,
+//   password: hashPassword,
+//   phoneNumber,
+//   role,
+//   location
+// };
+
+// if (role === "Organisation") {
+//   userData.organisationName = req.body.organisationName;
+// }
+// if (role === "Hospital") {
+//   userData.hospitalName = req.body.hospitalName;
+// }
+
+// const user = new userModel(userData);
     await user.save()
     return res.status(201).send({
       success:true,
@@ -28,9 +88,10 @@ const registerController=async(req,res)=>{
     res.status(500).send({
       success:false,
       message:"Error in Register API",
-      error
+      error:error.message||error
     })
   }
+  console.log("Request Body:", req.body);
 };
 
 //login call back

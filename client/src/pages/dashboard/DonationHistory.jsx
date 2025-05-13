@@ -58,28 +58,30 @@ const DonationHistory = () => {
                    <tbody>
                    
                      {data?.map((record) => (
-                       <tr key={record._id} className="hover:bg-gray-50">
-                         {
-                          record.organisation ? (
-                            <>
-                           
-                            <td className="px-4 py-2 border-b">{ record.bloodGroup}</td>
-                         <td className="px-4 py-2 border-b">{ record.quantity}</td>
-                         <td className="px-4 py-2 border-b">{ record.organisation.organisationName+"(ORG)"|| record.hospital.hospitalName+"(HOSPITAL)"}</td>
-                         <td className="px-4 py-2 border-b">{ record.organisation.location|| record.hospital.location}</td>
-                         <td className="px-4 py-2 border-b">{ record.organisation.email|| record.hospital.email}</td>
-                         <td className="px-4 py-2 border-b">{ record.organisation.phoneNumber|| record.hospital.phoneNumber}</td>
-                         {/* <td className="px-4 py-2 border-b">{record.email}</td> */}
-                       
-                         <td className="px-4 py-2 border-b">
-                           {moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}
-                         </td>
-                         </>
-                          ):("")
-}
+                      <tr key={record._id} className="hover:bg-gray-50">
+                     <td className="px-4 py-2 border-b">{record.bloodGroup}</td>
+<td className="px-4 py-2 border-b">{record.quantity}</td>
+<td className="px-4 py-2 border-b">
+  {record.organisation?.organisationName
+    ? record.organisation.organisationName + " (ORG)"
+    : record.hospital?.hospitalName + " (HOSPITAL)"}
+</td>
+<td className="px-4 py-2 border-b">
+  {record.organisation?.location?.full ||
+    record.hospital?.location?.full || "N/A"}
+</td>
+<td className="px-4 py-2 border-b">
+  {record.organisation?.email || record.hospital?.email || "N/A"}
+</td>
+<td className="px-4 py-2 border-b">
+  {record.organisation?.phoneNumber || record.hospital?.phoneNumber || "N/A"}
+</td>
 
-                        
-                       </tr>
+                      <td className="px-4 py-2 border-b">
+                        {moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}
+                      </td>
+                    </tr>
+                    
                      ))}
                    </tbody>
                  </table>
