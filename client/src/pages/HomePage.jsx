@@ -38,7 +38,7 @@
 //                     </a>
 //           </div>
 //           <nav className="space-x-6 text-lg">
-            
+
 //             <Link to="/nearby-hospitals" className="hover:text-red-500 transition">Nearby Hospitals</Link>
 //             <Link to="/" className="hover:text-red-500 transition">Blood Inventory</Link>
 //             <Link to="/" className="hover:text-red-500 transition">Emergency Request</Link>
@@ -187,6 +187,8 @@ import registration from "../assets/Hero-Content-Images/registration.jpg";
 import healthScreening from "../assets/Hero-Content-Images/healthscreening.jpg";
 import donation from "../assets/Hero-Content-Images/donation.jpg";
 import impact from "../assets/Hero-Content-Images/impact.png";
+import EmergencyRequestModal from "../components/shared/modal/EmergencyRequestModal";
+import { useState } from "react";
 
 const testimonials = [
   {
@@ -205,9 +207,9 @@ const testimonials = [
 
 const HomePage = () => {
   const navigate = useNavigate();
+  const [showModal, setShowModal] = useState(false);
   return (
     <div className="relative min-h-screen bg-gradient-to-tr from-black via-red-900 to-black text-white overflow-x-hidden">
-
       {/* BACKGROUND EFFECTS */}
       <div className="absolute top-0 left-0 w-full h-full z-0 pointer-events-none overflow-hidden">
         <div className="absolute w-96 h-96 bg-red-400 opacity-10 rounded-full blur-3xl animate-pulse top-20 left-10"></div>
@@ -217,14 +219,30 @@ const HomePage = () => {
       {/* NAVBAR */}
       <div className="z-10 relative flex items-center justify-between px-10 py-6 border-b border-red-600 bg-black/60 backdrop-blur-lg">
         <div>
-          <a href="/" className="text-2xl font-bold text-red-500 flex items-center gap-2">
-            <MdBloodtype className="text-3xl" /> BLOOD BANK <span className="text-white ml-3">APP</span>
+          <a
+            href="/"
+            className="text-2xl font-bold text-red-500 flex items-center gap-2"
+          >
+            <MdBloodtype className="text-3xl" /> BLOOD BANK{" "}
+            <span className="text-white ml-3">APP</span>
           </a>
         </div>
         <nav className="space-x-6 text-lg">
-          <Link to="/nearby-hospitals" className="hover:text-red-400 transition">Nearby Hospitals</Link>
-          <Link to="/" className="hover:text-red-400 transition">Blood Inventory</Link>
-          <Link to="/" className="hover:text-red-400 transition">Emergency Request</Link>
+          <Link
+            to="/nearby-hospitals"
+            className="hover:text-red-400 transition"
+          >
+            Nearby Hospitals
+          </Link>
+          <Link to="/" className="hover:text-red-400 transition">
+            Blood Inventory
+          </Link>
+          <button
+            onClick={() => setShowModal(true)}
+            className="hover:text-red-400 transition"
+          >
+            Emergency Request
+          </button>
           <button
             className="bg-red-600 text-white font-semibold px-6 py-3 rounded hover:bg-red-700 transition"
             onClick={() => navigate("/login")}
@@ -248,11 +266,16 @@ const HomePage = () => {
       {/* QUOTE SECTION */}
       <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8 mt-12 px-10 z-10 relative">
         <div className="animate-fadeInUp">
-          <img src={second} alt="donor" className="rounded-lg border border-red-700 shadow-xl" />
+          <img
+            src={second}
+            alt="donor"
+            className="rounded-lg border border-red-700 shadow-xl"
+          />
         </div>
         <div className="animate-fadeInRight">
           <h1 className="text-4xl font-bold text-red-400 mb-4 tracking-tight leading-snug">
-            "Blood donation is the real act of humanity. It can save a life, it can save a family."
+            "Blood donation is the real act of humanity. It can save a life, it
+            can save a family."
           </h1>
           <p className="text-lg text-gray-200">– Austin O'Malley</p>
         </div>
@@ -267,8 +290,9 @@ const HomePage = () => {
           <img src={third} alt="info" className="rounded-lg mb-4 shadow-lg" />
           <p className="text-center text-gray-300">
             <code>
-              After giving blood, your body begins the remarkable process of replenishing its supply. This renewal stimulates the production
-              of fresh blood cells, promoting overall well-being and vitality.
+              After giving blood, your body begins the remarkable process of
+              replenishing its supply. This renewal stimulates the production of
+              fresh blood cells, promoting overall well-being and vitality.
             </code>
           </p>
         </div>
@@ -278,7 +302,10 @@ const HomePage = () => {
           <table className="table-auto text-sm md:text-base">
             <thead>
               <tr>
-                <th colSpan="3" className="bg-red-600 text-white font-bold py-2">
+                <th
+                  colSpan="3"
+                  className="bg-red-600 text-white font-bold py-2"
+                >
                   Blood Type Compatibility Matrix
                 </th>
               </tr>
@@ -337,10 +364,19 @@ const HomePage = () => {
             img: impact,
           },
         ].map((step, i) => (
-          <div key={i} className="bg-white text-black rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 overflow-hidden animate-fadeInUp">
-            <img src={step.img} alt={step.title} className="object-cover w-full h-48 md:h-full" />
+          <div
+            key={i}
+            className="bg-white text-black rounded-lg shadow-md grid grid-cols-1 md:grid-cols-2 overflow-hidden animate-fadeInUp"
+          >
+            <img
+              src={step.img}
+              alt={step.title}
+              className="object-cover w-full h-48 md:h-full"
+            />
             <div className="p-4">
-              <h3 className="font-bold text-lg text-red-600 mb-2">{step.title}</h3>
+              <h3 className="font-bold text-lg text-red-600 mb-2">
+                {step.title}
+              </h3>
               <p>{step.desc}</p>
             </div>
           </div>
@@ -354,6 +390,7 @@ const HomePage = () => {
         <p className="text-lg">Email: support@bloodbank.com</p>
         <p className="text-lg">Address: 123 Blood Street, Life City, India</p>
       </div>
+         {showModal && <EmergencyRequestModal onClose={() => setShowModal(false)} />}
     </div>
   );
 };

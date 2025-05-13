@@ -1,5 +1,8 @@
 // controllers/emergencyRequestController.js
 import EmergencyRequest from "../models/EmergencyRequestModel";
+import User from "../models/userModel.js"; // your combined model
+import path from "path";
+import fs from "fs";
 
 // ➤ Create Emergency Request
 export const createEmergencyRequestController = async (req, res) => {
@@ -64,7 +67,7 @@ export const updateEmergencyRequestStatusController = async (req, res) => {
     if (!["Accepted", "Rejected"].includes(status)) {
       return res.status(400).send({ success: false, message: "Invalid status value" });
     }
-    
+
 
     const request = await EmergencyRequest.findByIdAndUpdate(
       requestId,

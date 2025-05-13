@@ -21,6 +21,7 @@ import OrganisationRequestsPage from "./pages/dashboard/OrganisationRequestsPage
 import HomePageUserBased from "./pages/HomePageUserBased";
 import HomePage from "./pages/HomePage";
 import NearbyHospitals from "./pages/NoUser/NearbyHospitalAndBloodbanks";
+import EmergencyRequestPage from "./pages/dashboard/EmergencyRequestPage";
 
 function App() {
   return (
@@ -179,6 +180,14 @@ function App() {
             element={
               <PublicRoute>
                 <NearbyHospitals/>
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/emergency/new"
+            element={
+              <PublicRoute>
+                <EmergencyRequestPage/>
               </PublicRoute>
             }
           />

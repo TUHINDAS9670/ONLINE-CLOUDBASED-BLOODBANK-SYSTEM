@@ -4,10 +4,10 @@ const addressSchema = new mongoose.Schema({
   district: String,
   city: String,
   full: String,
-  coordinates: {
-    lat: Number,
-    lng: Number,
-  },
+  // coordinates: {
+  //   lat: Number,
+  //   lng: Number,
+  // },
 });
 
 const emergencyRequestSchema = new mongoose.Schema(
