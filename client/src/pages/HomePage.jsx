@@ -189,6 +189,8 @@ import donation from "../assets/Hero-Content-Images/donation.jpg";
 import impact from "../assets/Hero-Content-Images/impact.png";
 import EmergencyRequestModal from "../components/shared/modal/EmergencyRequestModal";
 import { useState } from "react";
+import { motion } from "framer-motion";
+
 
 const testimonials = [
   {
@@ -234,15 +236,20 @@ const HomePage = () => {
           >
             Nearby Hospitals
           </Link>
-          <Link to="/" className="hover:text-red-400 transition">
+          <Link to="/public-inventory" className="hover:text-red-400 transition">
             Blood Inventory
           </Link>
-          <button
-            onClick={() => setShowModal(true)}
-            className="hover:text-red-400 transition"
-          >
-            Emergency Request
-          </button>
+     
+
+         <motion.button
+  onClick={() => setShowModal(true)}
+  className="bg-red-600 text-white font-semibold py-1 px-4 rounded ml-4 shadow-md border border-white"
+  animate={{ opacity: [1, 0.3, 1] }}
+  transition={{ repeat: Infinity, duration: 1.5 }}
+>
+  🚨 Emergency Request
+</motion.button>
+
           <button
             className="bg-red-600 text-white font-semibold px-6 py-3 rounded hover:bg-red-700 transition"
             onClick={() => navigate("/login")}

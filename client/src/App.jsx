@@ -22,6 +22,14 @@ import HomePageUserBased from "./pages/HomePageUserBased";
 import HomePage from "./pages/HomePage";
 import NearbyHospitals from "./pages/NoUser/NearbyHospitalAndBloodbanks";
 import EmergencyRequestPage from "./pages/dashboard/EmergencyRequestPage";
+import HospitalBloodRequestPage from "./pages/dashboard/HospitalBloodRequestPage";
+import OrganisationHospitalRequestsPage from "./pages/dashboard/OrganisationHospitalRequestPage";
+import PublicInventoryDashboard from "./pages/NoUser/PublicInventoryDashboard";
+import CreateAdminPage from "./pages/admin/CreateAdminPage";
+import MyProfile from "./pages/dashboard/MyProfile";
+import EmergencyRequestStatusView from "./pages/admin/EmergencyRequestStatusView ";
+import AdminEmergencyRequests from "./pages/admin/AdminEmergencyRequests";
+import OrganisationEmergencyRequests from "./pages/dashboard/OrganisationEmergencyRequests";
 
 function App() {
   return (
@@ -125,6 +133,7 @@ function App() {
               </ProtectedRoute>
             }
           />
+          
 
           <Route
             path="/login"
@@ -160,10 +169,42 @@ function App() {
             }
           />
           <Route
+            path="/organisation/emergency-requests"
+            element={
+              <ProtectedRoute>
+                <OrganisationEmergencyRequests />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/hospital-blood-request"
+            element={
+              <ProtectedRoute>
+                <HospitalBloodRequestPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/organisation/organaisation-hospital-blood-requests"
+            element={
+              <ProtectedRoute>
+                <OrganisationHospitalRequestsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
             path="/admin/adminHome"
             element={
               <ProtectedRoute>
                 <AdminHomePage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin/emergency-requests"
+            element={
+              <ProtectedRoute>
+                <AdminEmergencyRequests />
               </ProtectedRoute>
             }
           />
@@ -176,10 +217,36 @@ function App() {
             }
           />
           <Route
+            path="/register-admin"
+            element={
+              <ProtectedRoute>
+                <CreateAdminPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/my-profile"
+            element={
+              <ProtectedRoute>
+                <MyProfile/>
+              </ProtectedRoute>
+            }
+          />
+         
+
+          <Route
             path="/nearby-hospitals"
             element={
               <PublicRoute>
                 <NearbyHospitals/>
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/public-inventory"
+            element={
+              <PublicRoute>
+                <PublicInventoryDashboard />
               </PublicRoute>
             }
           />
@@ -191,6 +258,7 @@ function App() {
               </PublicRoute>
             }
           />
+         
          
 
         </Routes>

@@ -1,86 +1,356 @@
 // controllers/emergencyRequestController.js
-import EmergencyRequest from "../models/EmergencyRequestModel";
-import User from "../models/userModel.js"; // your combined model
-import path from "path";
-import fs from "fs";
+const fs = require("fs");
+const path = require("path");
+const { v4: uuidv4 } = require("uuid");
+const EmergencyRequest = require("../models/EmergencyRequestModel");
+const User = require("../models/userModel");
 
-// ➤ Create Emergency Request
-export const createEmergencyRequestController = async (req, res) => {
+const submitEmergencyRequest = async (req, res) => {
   try {
-    const { name, email, phone, bloodGroup, quantity, location, organisationId } = req.body;
-
-    if (!name || !email || !phone || !bloodGroup || !quantity || !location) {
-      return res.status(400).send({ success: false, message: "All required fields must be filled" });
-    }
-
-    const newRequest = new EmergencyRequest({
-      name,
+    const {
+      fullName,
       email,
       phone,
       bloodGroup,
+      urgency,
       quantity,
-      location,
-      organisationId: organisationId || null,
+    } = req.body;
+
+    const address = JSON.parse(req.body.address);
+
+    if (!address || !address.country || !address.state || !address.city) {
+      return res.status(400).json({ success: false, message: "Incomplete address details." });
+    }
+
+    if (!req.file) {
+      return res.status(400).json({ success: false, message: "Document is required." });
+    }
+
+    const patientId = uuidv4();
+    const ext = path.extname(req.file.originalname); // .pdf, .jpg, etc.
+    const fileName = `${uuidv4()}${ext}`;
+    const destPath = path.join("uploads", "documents", fileName);
+
+    // Rename/move file from temp location to final destination
+    fs.renameSync(req.file.path, destPath);
+
+    const newRequest = new EmergencyRequest({
+      patientId,
+      fullName,
+      email,
+      phone,
+      bloodGroup,
+      urgency,
+      quantity,
+      address,
+      documentUrl: destPath.replace(/\\/g, "/"), // Store as forward slashes for URL compatibility
+      createdAt: new Date(),
     });
 
     await newRequest.save();
 
-    res.status(201).send({
-      success: true,
-      message: "Emergency blood request submitted successfully.",
-      request: newRequest,
-    });
-  } catch (error) {
-    console.error("Error in createEmergencyRequestController:", error);
-    res.status(500).send({ success: false, message: "Something went wrong", error });
+    res.status(200).json({ success: true, message: "Emergency request submitted.", patientId });
+  } catch (err) {
+    console.error("Emergency request error:", err);
+    res.status(500).json({ success: false, message: "Server error. Try again later." });
   }
 };
 
-// ➤ Get All Requests (For Admin / Org)
-export const getAllEmergencyRequestsController = async (req, res) => {
+
+// const updateEmergencyRequestStatusByAdmin = async (req, res) => {
+//   try {
+//     const { status, adminRemarks } = req.body;
+
+//     if (!["admin_approved", "rejected_by_admin"].includes(status)) {
+//       return res.status(400).send({ success: false, message: "Invalid status for admin" });
+//     }
+
+//     const request = await EmergencyRequest.findByIdAndUpdate(
+//       req.params.id,
+//       { status, adminRemarks, approvedByAdmin: status === "admin_approved" },
+//       { new: true }
+//     );
+
+//     if (!request) {
+//       return res.status(404).send({ success: false, message: "Request not found" });
+//     }
+
+//     res.status(200).send({ success: true, message: "Admin status updated", data: request });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send({ success: false, message: "Server error" });
+//   }
+// };
+
+// controllers/emergencyRequestController.js
+const updateEmergencyRequestStatusByAdmin = async (req, res) => {
   try {
-    const requests = await EmergencyRequest.find().sort({ createdAt: -1 });
-    res.status(200).send({ success: true, requests });
-  } catch (error) {
-    res.status(500).send({ success: false, message: "Error fetching emergency requests", error });
-  }
-};
+    const { userId, status, adminRemarks } = req.body;
 
-// ➤ Get Requests by Email (Patient view)
-export const getMyEmergencyRequestsController = async (req, res) => {
-  try {
-    const { email } = req.params;
-    const requests = await EmergencyRequest.find({ email }).sort({ createdAt: -1 });
-
-    res.status(200).send({ success: true, requests });
-  } catch (error) {
-    res.status(500).send({ success: false, message: "Error fetching user requests", error });
-  }
-};
-
-// ➤ Update Request Status (Accept / Reject)
-export const updateEmergencyRequestStatusController = async (req, res) => {
-  try {
-    const { requestId } = req.params;
-    const { status } = req.body;
-
-    if (!["Accepted", "Rejected"].includes(status)) {
-      return res.status(400).send({ success: false, message: "Invalid status value" });
+    // 🔐 Verify admin
+    const user = await User.findById(userId);
+    if (!user || user.role !== "Admin") {
+      return res.status(403).json({ success: false, message: "Only admins can update request status" });
     }
 
+    if (!["admin_approved", "rejected_by_admin"].includes(status)) {
+      return res.status(400).send({ success: false, message: "Invalid status for admin" });
+    }
 
     const request = await EmergencyRequest.findByIdAndUpdate(
-      requestId,
-      { status },
+      req.params.id,
+      { status, adminRemarks, approvedByAdmin: status === "admin_approved" },
       { new: true }
     );
 
-    res.status(200).send({
-      success: true,
-      message: `Request ${status.toLowerCase()} successfully`,
-      request,
-    });
+    if (!request) {
+      return res.status(404).send({ success: false, message: "Request not found" });
+    }
+
+    res.status(200).send({ success: true, message: "Admin status updated", data: request });
   } catch (error) {
-    res.status(500).send({ success: false, message: "Error updating request status", error });
+    console.error(error);
+    res.status(500).send({ success: false, message: "Server error" });
   }
 };
+
+const getAllEmergencyRequestsController = async (req, res) => {
+  try {
+    const requests = await EmergencyRequest.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, requests });
+  } catch (error) {
+    console.error("Error fetching requests:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+ const approveOrRejectByAdmin = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { action, adminRemarks } = req.body;
+
+    const user = await User.findById(req.body.userId); // 🔥 this is the key line
+    if (!user || user.role !== "Admin") {
+      return res.status(403).json({ success: false, message: "Admins only." });
+    }
+
+    const validActions = ["approve", "reject"];
+    if (!validActions.includes(action)) {
+      return res.status(400).json({ success: false, message: "Invalid action" });
+    }
+
+    const updatedFields =
+      action === "approve"
+        ? { status: "admin_approved", approvedByAdmin: true }
+        : { status: "rejected_by_admin", approvedByAdmin: false };
+
+    const updatedRequest = await EmergencyRequest.findByIdAndUpdate(
+      id,
+      { ...updatedFields, adminRemarks: adminRemarks || "" },
+      { new: true }
+    );
+
+    if (!updatedRequest) {
+      return res.status(404).json({ success: false, message: "Request not found" });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `Request ${action}ed by admin`,
+      data: updatedRequest,
+    });
+  } catch (err) {
+    console.error("Admin approval error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// const updateRequestByOrganisation = async (req, res) => {
+//   try {
+//     // const { userRole } = req.body;
+//     const user = await User.findById(req.body.userId);
+// if (!user || user.role !== "Organisation") {
+//       return res.status(403).json({ success: false, message: "Only organisations can perform this action." });
+//     }
+
+//     const { status, orgRemarks } = req.body;
+//     const request = await EmergencyRequest.findByIdAndUpdate(
+//       req.params.id,
+//       {
+//         status,
+//         approvedByOrganisation: status === "accepted_by_org"
+//       },
+//       { new: true }
+//     );
+
+//     if (!request) {
+//       return res.status(404).send({ success: false, message: "Request not found" });
+//     }
+
+//     res.status(200).send({ success: true, message: "Request updated", data: request });
+//   } catch (error) {
+//     console.error("Organisation request update error:", error);
+//     res.status(500).send({ success: false, message: "Server error" });
+//   }
+// };
+
+
+// const getAdminPendingRequests = async (req, res) => {
+//   try {
+// const userId = req.body.userId;
+// const user = await User.findById(userId);
+//     if (!user || user.role !== "Admin") {
+//       return res.status(403).json({ success: false, message: "Access denied: Admins only" });
+//     }
+
+//     const requests = await EmergencyRequest.find({ status: "pending_admin" }).sort({ createdAt: -1 });
+//     res.status(200).json({ success: true, requests });
+//   } catch (error) {
+//     console.error("Error fetching admin pending requests:", error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+const { Country, State, City } = require("country-state-city");
+
+const getAdminPendingRequests = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const user = await User.findById(userId);
+    if (!user || user.role !== "Admin") {
+      return res.status(403).json({ success: false, message: "Access denied: Admins only" });
+    }
+
+    let requests = await EmergencyRequest.find({ status: "pending_admin" }).sort({ createdAt: -1 });
+
+    // 🛠️ Map and transform address codes to names
+    requests = requests.map(req => {
+      const countryName = Country.getCountryByCode(req.address?.country)?.name || req.address?.country;
+      const stateName = State.getStateByCodeAndCountry(req.address?.state, req.address?.country)?.name || req.address?.state;
+      const cityName = req.address?.city || "";
+
+      return {
+        ...req._doc,
+        address: {
+          country: countryName,
+          state: stateName,
+          city: cityName,
+          manualAddress: req.address?.manualAddress || ""
+        }
+      };
+    });
+
+    res.status(200).json({ success: true, requests });
+  } catch (error) {
+    console.error("Error fetching admin pending requests:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+// Get all approved requests in same state or country
+
+// const getOrgEmergencyRequestsController = async (req, res) => {
+//   try {
+//    const userId = req.body.userId; // ✅ FIXED: use authenticated user
+//     const user = await User.findById(userId);
+//     if (!user || user.role !== "Organisation") {
+//       return res.status(403).json({ success: false, message: "Access denied" });
+//     }
+
+// const stateName = user.location.state; // already stored as code
+// const countryName = user.location.country;
+
+//     if (!stateName || !countryName) {
+//       return res.status(400).json({ success: false, message: "Invalid address data in profile" });
+//     }
+
+//     const requests = await EmergencyRequest.find({
+//       $or: [
+//         { "address.state": stateName },
+//         { "address.country": countryName },
+//       ],
+//       status: "admin_approved"
+//     }).sort({ createdAt: -1 });
+
+//     res.status(200).json({ success: true, requests });
+//   } catch (err) {
+//     console.error("Org view error:", err);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+const getOrgEmergencyRequestsController = async (req, res) => {
+  try {
+    const userId = req.body.userId;
+    const user = await User.findById(userId);
+
+    if (!user || user.role !== "Organisation") {
+      return res.status(403).json({ success: false, message: "Access denied" });
+    }
+
+    const stateCode = user.location?.state;
+    const countryCode = user.location?.country;
+
+    if (!stateCode || !countryCode) {
+      return res.status(400).json({ success: false, message: "Incomplete organisation location info" });
+    }
+
+    const requests = await EmergencyRequest.find({
+      status: "admin_approved",
+      $or: [
+        { "address.state": stateCode },
+        // { "address.country": countryCode }
+      ]
+    }).sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, requests });
+  } catch (err) {
+    console.error("Org view error:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+const updateRequestByOrganisation = async (req, res) => {
+  try {
+    const { userId, status } = req.body;
+    const { id } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user || user.role !== "Organisation") {
+      return res.status(403).json({ success: false, message: "Only organisations can perform this action." });
+    }
+
+    if (!["accepted_by_org", "rejected_by_org"].includes(status)) {
+      return res.status(400).json({ success: false, message: "Invalid status for organisation." });
+    }
+
+    const updatedRequest = await EmergencyRequest.findByIdAndUpdate(
+      id,
+      {
+        status,
+        approvedByOrganisation: status === "accepted_by_org"
+      },
+      { new: true }
+    );
+
+    if (!updatedRequest) {
+      return res.status(404).json({ success: false, message: "Request not found" });
+    }
+
+    res.status(200).json({ success: true, message: "Request status updated by organisation", data: updatedRequest });
+  } catch (error) {
+    console.error("Organisation request update error:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+const getRequestByPatientId = async (req, res) => {
+  const { patientId } = req.params;
+
+  const request = await EmergencyRequest.findOne({ patientId });
+  if (!request) {
+    return res.status(404).json({ success: false, message: "Not found" });
+  }
+
+  res.status(200).json({ success: true, request });
+};
+
+
+module.exports = { submitEmergencyRequest, updateEmergencyRequestStatusByAdmin,getAllEmergencyRequestsController,approveOrRejectByAdmin,updateRequestByOrganisation,getAdminPendingRequests,getOrgEmergencyRequestsController,getRequestByPatientId};

@@ -119,3 +119,87 @@ export const getCurrentUser = createAsyncThunk(
     }
   }
 );
+// update profile
+export const updateUserProfile = createAsyncThunk(
+  "auth/updateProfile",
+  async (
+    {
+      userId,
+      name,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      organisationName,
+      hospitalName,
+      bloodGroup,
+      location,
+    },
+    { rejectWithValue }
+  ) => {
+    try {
+      const { data } = await API.put("/auth/update-profile", {
+        userId,
+        name,
+        firstName,
+        lastName,
+        email,
+        phoneNumber,
+        organisationName,
+        hospitalName,
+        bloodGroup,
+        location,
+      });
+
+      if (data && data.success) {
+        toast.success("Profile updated successfully", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "dark",
+        });
+      }
+
+      return data;
+    } catch (error) {
+      console.log(error);
+      if (error.response && error.response.data.message) {
+        return rejectWithValue(error.response.data.message);
+      } else {
+        return rejectWithValue(error.message);
+      }
+    }
+  }
+);
+// Change password thunk
+export const changePassword = createAsyncThunk(
+  "auth/changePassword",
+  async ({ oldPassword, newPassword }, { rejectWithValue }) => {
+    try {
+      const { data } = await API.put("/auth/change-password", {
+        oldPassword,
+        newPassword,
+      });
+
+      if (data?.success) {
+        toast.success(data.message || "Password changed successfully", {
+          position: "top-right",
+          autoClose: 3000,
+          theme: "dark",
+        });
+      }
+
+      return data;
+    } catch (error) {
+      console.log(error);
+      const msg =
+        error.response?.data?.message || "Failed to change password";
+      toast.error(msg, {
+        position: "top-right",
+        autoClose: 3000,
+        theme: "dark",
+      });
+      return rejectWithValue(msg);
+    }
+  }
+);
+

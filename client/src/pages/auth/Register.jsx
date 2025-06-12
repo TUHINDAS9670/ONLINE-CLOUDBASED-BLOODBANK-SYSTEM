@@ -34,90 +34,7 @@ const navigate=useNavigate();
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
   
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   const formData= {
-  //     firstName,
-  //     lastName,
-  //     email,
-  //     password,
-  //     phoneNumber,
-  //     hospitalName,
-  //     organisationName,
-  //     gender,
-  //     bloodGroup,
-  //     location,
-  //     age,
-  //     role,
-  //   } ;
 
-  //   console.log("Form submitted", formData);
-  //   // alert("Thank you! for Register");
-  //   try {
-  //     dispatch(
-  //       userRegister({
-  //         // name: `${firstName} ${lastName}`.trim(), // ✅ Combine first & last name
-  //         firstName,
-  //         lastName,
-  //         role,
-  //         email,
-  //         password,
-  //         location,
-  //         age,
-  //         gender,
-  //         phoneNumber,
-  //         hospitalName,
-  //         organisationName,
-  //         bloodGroup,
-  //       })
-  //     );
-  //   } catch (error) {
-  //     console.log(error);
-
-  //   }
-  //   setFormData({
-  //     firstName: "",
-  //     lastName: "",
-  //     email: "",
-  //     password: "",
-  //     phoneNumber: "",
-  //     hospitalName: "",
-  //     organisationName: "",
-  //     gender: "",
-  //     bloodGroup: "",
-  //     location: "",
-  //     role: "Donor", // Reset role in formData
-  //   });
-  //   setRole("Donor"); // Reset role state
-  // };
-
-  //old form date before update adrees field
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  //   console.log("Form submitted", formData);
-  //   try {
-  //     dispatch(userRegister(formData)); // use the state directly
-  //   } catch (error) {
-  //     console.log(error);
-  //   }
-
-  //   // Reset the form
-  //   setFormData({
-  //     firstName: "",
-  //     lastName: "",
-  //     email: "",
-  //     password: "",
-  //     phoneNumber: "",
-  //     hospitalName: "",
-  //     organisationName: "",
-  //     gender: "",
-  //     bloodGroup: "",
-  //     location: "",
-  //     role: "Donor",
-  //   });
-  //   setRole("Donor");
-  // };
-  //new form dagta fter update address field
   const handleSubmit = (e) => {
     e.preventDefault();
     // console.log("Form submitted", formData);
@@ -142,11 +59,7 @@ const navigate=useNavigate();
       location: fullAddress,
     };
 
-    // // Clean up unused fields if necessary
-    // delete submissionData.city;
-    // delete submissionData.state;
-    // delete submissionData.country;
-    // delete submissionData.location;
+
  console.log("Final Submission Data:", submissionData);
     try {
       dispatch(userRegister(submissionData));
@@ -265,17 +178,7 @@ const navigate=useNavigate();
                     />
                     Donor
                   </label>
-                  <label className="ml-2">
-                    <input
-                      type="radio"
-                      name="role"
-                      id="adminRadio"
-                      value={"Admin"}
-                      onChange={() => handleRoleChange("Admin")}
-                      className="mr-2"
-                    />
-                    Admin
-                  </label>
+                 
                   <label className="ml-2">
                     <input
                       type="radio"
@@ -302,7 +205,7 @@ const navigate=useNavigate();
               </div>
 
               <form onSubmit={handleSubmit} className="flex flex-col gap-3 ">
-                {(role === "Donor" || role === "Admin") && (
+                {(role === "Donor" ) && (
                   <div>
                     <div>
                       <label
@@ -469,25 +372,7 @@ const navigate=useNavigate();
                       </div>
                     </div>
                   )}
-                {/* Address */}
-                {/* <div>
-                  <label
-                    htmlFor="location"
-                    className="block text-sm font-medium text-gray-700"
-                  >
-                    Address
-                  </label>
-                  <textarea
-                    id="location"
-                    name="location"
-                    value={formData.location}
-                    onChange={handleChange}
-                    required
-                    placeholder="Enter your address"
-                    className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg resize-none "
-                  ></textarea>
-                  
-                </div> */}
+    
                 <div>
                   <label className="block font-semibold text-gray-700">
                     Country
@@ -559,55 +444,7 @@ const navigate=useNavigate();
                     className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
                   />
                 </div>
-                {/* <button
-  type="button"
-  onClick={async () => {
-    if (!navigator.geolocation) {
-      toast.error("Geolocation is not supported by your browser.");
-      return;
-    }
-  
-    navigator.geolocation.getCurrentPosition(
-      async (position) => {
-        const { latitude, longitude } = position.coords;
-  
-        try {
-          const response = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`
-          );
-          const data = await response.json();
-  
-          if (data && data.address) {
-            const { state, county, village, city, town, suburb, municipality } = data.address;
-            const district = county || municipality || city || town || village || suburb || "";
-            const location = data.display_name;
-  
-            setFormData((prev) => ({
-              ...prev,
-              location: location || "",
-              state: state || "",
-              city: district || "",
-              latitude: latitude.toString(),     // ✅ Store lat
-              longitude: longitude.toString(),   // ✅ Store lng
-            }));
-  
-            toast.success("Address auto-filled from current location!");
-          } else {
-            toast.error("Failed to extract address details.");
-          }
-        } catch (error) {
-          console.error(error);
-          toast.error("Error fetching address from location.");
-        }
-      },
-      () => {
-        toast.error("Failed to detect location.");
-      }
-    );
-  }}  
->
-  Auto-detect Location
-</button> */}
+
 
                 {(role === "Admin" || role === "Donor") && (
                   <div>

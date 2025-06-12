@@ -20,7 +20,7 @@ const Sidebar = () => {
         <div className="menu ">
           {user?.role === "Organisation" && (
             <>
-              <div
+               <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
                   location.pathname === "/"
                     ? "bg-red-500 text-white"
@@ -32,6 +32,55 @@ const Sidebar = () => {
                   Inventory
                 </Link>
               </div>
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/emergency-requests-dashboard"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <FaHospitalAlt className="lg:w-[80px] lg:h-[30px]" />
+                <Link
+                  to="/organisation/emergency-requests"
+                  className="font-bold ml-[-22px]"
+                >
+                 Patient's Emergency Request
+                </Link>
+              </div>
+ <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/organisation/donation-requests"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <FaHospitalAlt className="lg:w-[80px] lg:h-[30px]  " />
+
+                <Link
+                  to="/organisation/donation-requests"
+                  className="font-bold ml-[-22px]"
+                >
+                  Donation Requests
+                </Link>
+              </div>
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname ===
+                  "/organisation/organaisation-hospital-blood-requests"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <FaHospitalAlt className="lg:w-[80px] lg:h-[30px]  " />
+
+                <Link
+                  to="/organisation/organaisation-hospital-blood-requests"
+                  className="font-bold ml-[-22px]"
+                >
+                  Hospital's Emergency Requests
+                </Link>
+              </div>
+             
               <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg  pl-11 ${
                   location.pathname === "/donor"
@@ -58,23 +107,39 @@ const Sidebar = () => {
                   Hospital
                 </Link>
               </div>
-              <div
-                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
-                  location.pathname === "/organisation/donation-requests"
-                    ? "bg-red-500 text-white"
-                    : "bg-gray-200 text-black"
-                }`}
-              >
-                <FaHospitalAlt className="lg:w-[80px] lg:h-[30px]  " />
-
-                <Link to="/organisation/donation-requests" className="font-bold ml-[-22px]">
-                  Donation Requests
-                </Link>
-              </div>
+             
             </>
           )}
           {user?.role === "Admin" && (
             <>
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/emergency-requests-dashboard"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <FaHospitalAlt className="lg:w-[80px] lg:h-[30px]" />
+                <Link
+                  to="/admin/emergency-requests"
+                  className="font-bold ml-[-22px]"
+                >
+                  Emergency Request Manage
+                </Link>
+              </div>
+
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/register-admin"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <IoIosPeople className="lg:w-[80px] lg:h-[30px]  " />
+                <Link to="/register-admin" className="font-bold ml-[-22px]">
+                  Add New Admin
+                </Link>
+              </div>
               <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
                   location.pathname === "/donor-list"
@@ -140,10 +205,17 @@ const Sidebar = () => {
                   : "bg-gray-200 text-black"
               }`}
             >
-              <BsPeopleFill className="lg:w-[80px] lg:h-[30px]  " />
+              {/* <BsPeopleFill className="lg:w-[80px] lg:h-[30px]  " />
 
               <Link to="/consumer" className="font-bold ml-[-22px]">
                 Consumer
+              </Link> */}
+              <BiDonateBlood className="lg:w-[80px] lg:h-[30px]" />
+              <Link
+                to="/hospital-blood-request"
+                className="font-bold ml-[-22px]"
+              >
+                Request Blood
               </Link>
             </div>
           )}
@@ -175,13 +247,12 @@ const Sidebar = () => {
                 <Link to="/donation-request" className="font-bold ml-[-22px]">
                   Donation Request
                 </Link>
-                
               </div>
               <div>
                 <BiDonateBlood className="lg:w-[80px] lg:h-[30px]" />
-               
+
                 <Link to="/donor-dashboard" className="font-bold ml-[-22px]">
-                Dashboard
+                  Dashboard
                 </Link>
               </div>
             </>

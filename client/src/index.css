@@ -78,3 +78,7 @@ input-style {
     animation: slide-up 1.2s ease-in-out;
   }
 
+  .nav-link {
+  @apply text-white hover:text-red-400 transition-all duration-200 ease-in;
+}
+

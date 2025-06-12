@@ -1,253 +1,308 @@
 import React, { useState, useEffect } from "react";
 import { Country, State, City } from "country-state-city";
-import axios from "axios";
+import { motion } from "framer-motion";
 import { toast } from "react-toastify";
-import { useNavigate } from "react-router-dom";
+import API from "../../services/API";
 
 const EmergencyRequestForm = () => {
-  const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    name: "",
+    fullName: "",
     email: "",
     phone: "",
     bloodGroup: "",
     urgency: "",
     quantity: "",
-   country: "IN",  // default India ISO code
-state: "",      // will hold ISO code of state
-
+    country: "IN",
+    state: "",
     city: "",
-    location: "",
+    manualAddress: "", // ✅ add this
+
     document: null,
   });
 
   const [states, setStates] = useState([]);
   const [cities, setCities] = useState([]);
-  const [patientId, setPatientId] = useState(null);
-  const [existingRequests, setExistingRequests] = useState([]);
 
-  // Load States based on Country
   useEffect(() => {
-    const allStates = State.getStatesOfCountry("IN");
-    setStates(allStates);
-  }, []);
+    const selectedStates = State.getStatesOfCountry(formData.country);
+    setStates(selectedStates);
+    setFormData((prev) => ({ ...prev, state: "", city: "" }));
+  }, [formData.country]);
 
-  // Load Cities based on State
   useEffect(() => {
     if (formData.state) {
-   
-      const allCities = City.getCitiesOfState(formData.country, formData.state);
-      setCities(allCities);
+      const selectedCities = City.getCitiesOfState(
+        formData.country,
+        formData.state
+      );
+      setCities(selectedCities);
     }
-  }, [formData.state, states]);
+  }, [formData.state]);
 
-  // Handle input
-  const handleFileChange = (e) => {
-    setFormData({ ...formData, document: e.target.files[0] });
+  const handleChange = (e) => {
+    const { name, value, files } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: files ? files[0] : value,
+    }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    toast.success("Form submitted successfully!");
-    // FormData for uploading file
-    const data = new FormData();
-    for (let key in formData) {
-      data.append(key, formData[key]);
-    }
+
+    const formDataToSend = new FormData();
+    formDataToSend.append("fullName", formData.fullName);
+    formDataToSend.append("phone", formData.phone);
+    formDataToSend.append("email", formData.email);
+    formDataToSend.append("bloodGroup", formData.bloodGroup);
+    formDataToSend.append("urgency", formData.urgency);
+    formDataToSend.append("quantity", formData.quantity);
+    formDataToSend.append("document", formData.document);
+    formDataToSend.append(
+      "address",
+      JSON.stringify({
+        country: formData.country,
+        state: formData.state,
+        city: formData.city,
+        manualAddress: formData.manualAddress, // ✅ include here
+      })
+    );
+
+    console.log("FormData values:");
+    console.log("fullName:", formData.fullName);
+    console.log("email:", formData.email);
+    console.log("phone:", formData.phone);
+    console.log("bloodGroup:", formData.bloodGroup);
+    console.log("urgency:", formData.urgency);
+    console.log("quantity:", formData.quantity);
+    console.log("country:", formData.country);
+    console.log("state:", formData.state);
+    console.log("city:", formData.city);
+    console.log("document:", formData.document);
 
     try {
-      const res = await axios.post("/api/emergency/new-request", data);
+      console.log("Submitting Data:", formDataToSend);
+
+      const res = await API.post("/emergency/submit", formDataToSend, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
       if (res.data.success) {
-        setPatientId(res.data.patientId);
-        setExistingRequests([res.data.request]);
-        toast.success("Request submitted!");
+        toast.success(`Request submitted! Your ID: ${res.data.patientId}`);
+        setFormData({
+          fullName: "",
+          email: "",
+          phone: "",
+          bloodGroup: "",
+          urgency: "",
+          quantity: "",
+          country: "IN",
+          state: "",
+          city: "",
+          document: null,
+        });
+        // reset
       }
     } catch (err) {
-      toast.error("Submission failed");
+      toast.error(err?.response?.data?.message || "Failed to submit");
+      console.error("Emergency request error:", err.message);
+      console.error("Full error object:", err);
     }
   };
 
   return (
-    <div className="p-4 mt-20">
-      <h1 className="text-2xl font-bold mb-4">Emergency Blood Request</h1>
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-2 gap-4 bg-white p-6 rounded shadow"
+    <div className="max-w-3xl mx-auto bg-white shadow-lg rounded-lg p-6 mt-10">
+      <motion.h2
+        className="text-3xl font-bold text-center text-red-600 mb-4"
+        animate={{ opacity: [0.3, 1, 0.3] }}
+        transition={{ duration: 1.5, repeat: Infinity }}
       >
-         <input
-          type="text"
-          placeholder="Full Name"
-          value={formData.name}
-          onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-          className="border p-2 rounded"
-          required
-        />
-        <input
-          type="email"
-          placeholder="Email"
-          value={formData.email}
-          onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-          className="border p-2 rounded"
-          required
-        />
-       
-        <input
-          type="tel"
-          placeholder="Phone Number"
-          value={formData.phone}
-          onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-          className="border p-2 rounded"
-          required
-        />
+        🚨 Emergency Blood Request Form
+      </motion.h2>
+
+      <form onSubmit={handleSubmit} className="space-y-4">
+        {/* Full Name */}
+        <div>
+          <label className="text-red-600">Full Name</label>
+          <input
+            type="text"
+            name="fullName"
+            value={formData.fullName}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+            required
+          />
+        </div>
+
+        {/* Email */}
+        <div>
+          <label className="text-red-600">Email</label>
+          <input
+            type="email"
+            name="email"
+            value={formData.email}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+            required
+          />
+        </div>
+
+        {/* Phone */}
+        <div>
+          <label className="text-red-600">Phone</label>
+          <input
+            type="tel"
+            name="phone"
+            value={formData.phone}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+            required
+          />
+        </div>
 
         {/* Blood Group */}
-        <select
-          value={formData.bloodGroup}
-          onChange={(e) =>
-            setFormData({ ...formData, bloodGroup: e.target.value })
-          }
-          className="border p-2 rounded"
-          required
-        >
-          <option value="">Select Blood Group</option>
-          {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
-            <option key={bg} value={bg}>
-              {bg}
-            </option>
-          ))}
-        </select>
+        <div>
+          <label className="text-red-600">Blood Group</label>
+          <select
+            name="bloodGroup"
+            value={formData.bloodGroup}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+            required
+          >
+            <option value="">Select</option>
+            {["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"].map((bg) => (
+              <option key={bg} value={bg}>
+                {bg}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* Urgency */}
-        <select
-          value={formData.urgency}
-          onChange={(e) =>
-            setFormData({ ...formData, urgency: e.target.value })
-          }
-          className="border p-2 rounded"
-          required
-        >
-          <option value="">Urgency Level</option>
-          <option value="urgent">Urgent (within 6 hrs)</option>
-          <option value="24hrs">Within 24 Hours</option>
-          <option value="48hrs">Within 48 Hours</option>
-        </select>
+        <div>
+          <label className="text-red-600">Urgency</label>
+          <select
+            name="urgency"
+            value={formData.urgency}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+            required
+          >
+            <option value="">Select</option>
+            <option value="Low">Low (24 hrs)</option>
+            <option value="Moderate">Medium (12 hrs)</option>
+            <option value="High">High (Within 6 hrs)</option>
+            <option value="Critical">Critical (ASAP)</option>
+          </select>
+        </div>
 
         {/* Quantity */}
-        <input
-          type="number"
-          placeholder="Quantity (ml)"
-          value={formData.quantity}
-          onChange={(e) =>
-            setFormData({ ...formData, quantity: e.target.value })
-          }
-          className="border p-2 rounded"
-          required
-        />
+        <div>
+          <label className="text-red-600">Quantity (in units)</label>
+          <input
+            type="number"
+            name="quantity"
+            value={formData.quantity}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+            min="1"
+            required
+          />
+        </div>
 
         {/* Country */}
-        <select
-  value={formData.country}
-  onChange={(e) => {
-    setFormData({ ...formData, country: e.target.value, state: "", city: "" });
-    const statesList = State.getStatesOfCountry(e.target.value);
-    setStates(statesList);
-    setCities([]);
-  }}
-  className="border p-2 rounded"
-  required
->
-  <option value="">Select Country</option>
-  {Country.getAllCountries().map((country) => (
-    <option key={country.isoCode} value={country.isoCode}>
-      {country.name}
-    </option>
-  ))}
-</select>
-
+        <div>
+          <label className="text-red-600">Country</label>
+          <select
+            name="country"
+            value={formData.country}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+          >
+            {Country.getAllCountries().map((c) => (
+              <option key={c.isoCode} value={c.isoCode}>
+                {c.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* State */}
-        <select
-  value={formData.state}
-  onChange={(e) => {
-    setFormData({ ...formData, state: e.target.value, city: "" });
-    const citiesList = City.getCitiesOfState(formData.country, e.target.value);
-    setCities(citiesList);
-  }}
-  className="border p-2 rounded"
-  required
->
-  <option value="">Select State</option>
-  {states.map((state) => (
-    <option key={state.isoCode} value={state.isoCode}>
-      {state.name}
-    </option>
-  ))}
-</select>
-
+        <div>
+          <label className="text-red-600">State</label>
+          <select
+            name="state"
+            value={formData.state}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+            required
+          >
+            <option value="">Select</option>
+            {states.map((s) => (
+              <option key={s.isoCode} value={s.isoCode}>
+                {s.name}
+              </option>
+            ))}
+          </select>
+        </div>
 
         {/* City */}
-        <select
-  value={formData.city}
-  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
-  className="border p-2 rounded"
-  required
->
-  <option value="">Select City</option>
-  {cities.map((city) => (
-    <option key={city.name} value={city.name}>
-      {city.name}
-    </option>
-  ))}
-</select>
-
-
-        {/* Location */}
-        <input
-          type="text"
-          placeholder="Street / Area"
-          value={formData.location}
-          onChange={(e) =>
-            setFormData({ ...formData, location: e.target.value })
-          }
-          className="border p-2 rounded"
-          required
-        />
-
-        {/* Upload Document */}
-       
-         <label htmlFor="document" className="ml-1 font-semibold ">
-          Upload Hospital Verified Doucment(PDF or Image)
-           </label>
-           <input
-           name="document"
-          type="file"
-          accept="image/*,.pdf"
-          onChange={handleFileChange}
-          className="border p-2 rounded col-span-2"
-          required
-        />
-       
-       
-       
-
-        <button
-          type="submit"
-          className="bg-red-600 hover:bg-red-700 text-white font-semibold p-2 rounded col-span-2"
-        >
-          Submit Request
-        </button>
-      </form>
-
-      {/* Patient ID Popup */}
-      {patientId && (
-        <div className="mt-6 p-4 bg-green-100 text-green-800 border border-green-400 rounded">
-          <h3 className="font-bold text-lg">Your Patient ID:</h3>
-          <p className="text-xl">{patientId}</p>
-          <p className="text-sm text-gray-600">
-            Please save this ID to track your request status in the future.
-          </p>
+        <div>
+          <label className="text-red-600">City</label>
+          <select
+            name="city"
+            value={formData.city}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+            required
+          >
+            <option value="">Select</option>
+            {cities.map((c) => (
+              <option key={c.name} value={c.name}>
+                {c.name}
+              </option>
+            ))}
+          </select>
         </div>
-      )}
+        <div>
+          <label className="text-red-600">Full Address (optional)</label>
+          <input
+            type="text"
+            name="manualAddress"
+            value={formData.manualAddress}
+            onChange={handleChange}
+            className="w-full border border-black px-3 py-2 rounded"
+            placeholder="Flat/Street/Area/Pin code etc."
+          />
+        </div>
+
+        {/* Document Upload */}
+        <div className="mb-4">
+          <label className="block text-sm text-red-600 font-medium mb-1">
+            Upload Hospital Verification Document
+          </label>
+          <input
+            type="file"
+            name="document"
+            accept="image/*,application/pdf"
+            required
+            className="w-full border border-red-500 px-3 py-2 rounded"
+            onChange={(e) =>
+              setFormData({ ...formData, document: e.target.files[0] })
+            }
+          />
+        </div>
+
+        <div className="text-center">
+          <button
+            type="submit"
+            className="bg-black text-white px-6 py-2 rounded hover:bg-red-700 transition-all duration-300"
+          >
+            Submit Emergency Request
+          </button>
+        </div>
+      </form>
     </div>
   );
 };

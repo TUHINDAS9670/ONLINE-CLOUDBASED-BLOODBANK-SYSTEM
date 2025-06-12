@@ -289,11 +289,100 @@ try {
 }
 }
 
+const getPublicInventory = async (req, res) => {
+  try {
+    const { bloodGroup, state, city } = req.body;
+
+    let matchQuery = { inventoryType: "in" };
+    if (bloodGroup) matchQuery.bloodGroup = bloodGroup;
+
+    const inventoryIn = await inventoryModel.aggregate([
+      { $match: matchQuery },
+      {
+        $group: {
+          _id: {
+            bloodGroup: "$bloodGroup",
+            organisation: "$organisation"
+          },
+          totalIn: { $sum: "$quantity" }
+        }
+      }
+    ]);
+
+    const inventoryOut = await inventoryModel.aggregate([
+      {
+        $match: {
+          inventoryType: "out",
+          ...(bloodGroup && { bloodGroup }),
+        }
+      },
+      {
+        $group: {
+          _id: {
+            bloodGroup: "$bloodGroup",
+            organisation: "$organisation"
+          },
+          totalOut: { $sum: "$quantity" }
+        }
+      }
+    ]);
+
+    const inventoryMap = {};
+
+    // Add 'in' quantities
+    inventoryIn.forEach(i => {
+      const key = `${i._id.organisation}_${i._id.bloodGroup}`;
+      inventoryMap[key] = {
+        organisation: i._id.organisation,
+        bloodGroup: i._id.bloodGroup,
+        total: i.totalIn
+      };
+    });
+
+    // Subtract 'out' quantities
+    inventoryOut.forEach(o => {
+      const key = `${o._id.organisation}_${o._id.bloodGroup}`;
+      if (inventoryMap[key]) {
+        inventoryMap[key].total -= o.totalOut;
+        if (inventoryMap[key].total < 0) inventoryMap[key].total = 0;
+      }
+    });
+
+    // Build final result
+    const result = [];
+    for (const key in inventoryMap) {
+      const { organisation, bloodGroup, total } = inventoryMap[key];
+      const user = await userModel.findById(organisation);
+
+      if (!user || user.role !== "Organisation") continue;
+      if (state && user?.location?.state !== state) continue;
+      if (city && user?.location?.city !== city) continue;
+
+      result.push({
+        bloodGroup,
+        available: total,
+        bloodBankName: user.organisationName,
+        address: user.location?.location || "N/A",
+        state: user.location?.state || "N/A",
+        city: user.location?.city || "N/A",
+        contact: user.phoneNumber || "N/A",
+      });
+    }
+
+    res.status(200).json(result);
+  } catch (error) {
+    console.error("Error in public inventory:", error);
+    res.status(500).json({ success: false, message: "Server error", error });
+  }
+};
+
+
+
 module.exports={
   createInventoryController,getInventoryController,
   getDonorsController,
   getHospitalsController,
-  getOrganisationsController,
+  getOrganisationsController,getPublicInventory,
   getOrganisationsForHospitalsController,getInventoryHospitalController,getRecentInventoryController,
 
 }

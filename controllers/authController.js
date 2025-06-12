@@ -15,9 +15,7 @@ const registerController=async(req,res)=>{
     const salt=await bcrypt.genSalt(10)
     const hashPassword=await bcrypt.hash(req.body.password,salt);
     req.body.password=hashPassword
-    //reset data
-    // const user=new userModel(req.body)
-   
+
     const {
       name,
       firstName,
@@ -30,12 +28,7 @@ const registerController=async(req,res)=>{
       bloodGroup,
       location,
     } = req.body;
-       // Compose name
-      //  const fullName =
-      //  role === "Donor" || role === "Admin" || role === "User"
-      //    ? `${firstName} ${lastName}`.trim()
-      //    : undefined;
-        // Create user
+
         const user = new userModel({
           name: name?.trim() ||'',
 
@@ -60,21 +53,7 @@ const registerController=async(req,res)=>{
         });
     
     
-// const userData = {
-//   name,
-//   email,
-//   password: hashPassword,
-//   phoneNumber,
-//   role,
-//   location
-// };
 
-// if (role === "Organisation") {
-//   userData.organisationName = req.body.organisationName;
-// }
-// if (role === "Hospital") {
-//   userData.hospitalName = req.body.hospitalName;
-// }
 
 // const user = new userModel(userData);
     await user.save()
@@ -158,6 +137,141 @@ const  currentUserController=async(req,res)=>{
     });
   }
 };
+// update user profile
+const updateProfileController = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const user = await userModel.findById(userId);
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    // Destructure and sanitize updatable fields
+    const {
+      name,
+      firstName,
+      lastName,
+      email,
+      phoneNumber,
+      organisationName,
+      hospitalName,
+      bloodGroup,
+      location,
+    } = req.body;
+
+    user.name = name || user.name;
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.email = email || user.email;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
+    user.organisationName = organisationName || user.organisationName;
+    user.hospitalName = hospitalName || user.hospitalName;
+    user.bloodGroup = bloodGroup || user.bloodGroup;
+    user.location = location || user.location;
+
+    await user.save();
+
+    res.status(200).send({
+      success: true,
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).send({
+      success: false,
+      message: "Error updating profile",
+      error,
+    });
+  }
+};
+
+// UPDATE USER PROFILE
+const updateUserProfileController = async (req, res) => {
+  try {
+    const { userId } = req.body;
+
+    const updatedData = { ...req.body };
+    delete updatedData.userId; // avoid accidentally updating userId
+    delete updatedData.password; // password change should be separate
+
+    const user = await userModel.findByIdAndUpdate(userId, updatedData, {
+      new: true,
+    });
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      message: "Profile updated successfully",
+      user,
+    });
+  } catch (error) {
+    console.error("Update Profile Error:", error);
+    return res.status(500).send({
+      success: false,
+      message: "Failed to update profile",
+      error: error.message,
+    });
+  }
+};
+const changePasswordController = async (req, res) => {
+  try {
+    const { oldPassword, newPassword } = req.body;
+
+    if (!oldPassword || !newPassword) {
+      return res.status(400).send({
+        success: false,
+        message: "Old password and new password are required",
+      });
+    }
+
+    const { userId } = req.body; // ✅ From auth middleware
+    const user = await userModel.findById(userId);
+
+    if (!user) {
+      return res.status(404).send({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).send({
+        success: false,
+        message: "Old password is incorrect",
+      });
+    }
+
+    const salt = await bcrypt.genSalt(10);
+    const hashedNewPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedNewPassword;
+    await user.save();
+
+    return res.status(200).send({
+      success: true,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    console.error("Password Change Error:", error);
+    return res.status(500).send({
+      success: false,
+      message: "Failed to change password",
+      error: error.message,
+    });
+  }
+};
 
 
-module.exports={registerController,loginController,currentUserController};
+module.exports={registerController,loginController,currentUserController,updateProfileController,updateUserProfileController,changePasswordController};
