@@ -178,192 +178,195 @@ useEffect(() => {
     );
 
   return (
-    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-md rounded-lg">
-      <h2 className="text-2xl font-semibold text-red-600 text-center mb-6 border-b pb-2">
-        My Profile
-      </h2>
-      {/* Change Password Section */}
+    <div className="max-w-4xl mx-auto mt-10 p-6 bg-white shadow-xl rounded-xl border border-red-300 animate-fade-in">
+  <h2 className="text-3xl font-bold text-center text-red-600 mb-6 border-b-2 border-red-500 pb-2 tracking-wide">
+    My Profile
+  </h2>
 
-        <div className="flex justify-end mb-4">
-          <button
-            onClick={() => setPasswordModalOpen(true)}
-            className="bg-red-500 text-white px-4 py-1 rounded hover:bg-red-600 text-sm"
-          >
-            Change Password
-          </button>
-        </div>
-      <form
-        onSubmit={handleSubmit}
-        className="grid grid-cols-1 md:grid-cols-2 gap-4"
-      >
-        {user.role == "Donor" && (
-          <>
-            <div>
-              <label className="block text-red-600 mb-1"> Name</label>
-              <input
-                type="text"
-                name="firstName"
-                className="w-full border border-red-400 rounded px-3 py-2"
-                value={formData.name}
-                onChange={handleChange}
-              />
-            </div>
-          </>
-        )}
+  {/* Change Password Button */}
+  <div className="flex justify-end mb-4">
+    <button
+      onClick={() => setPasswordModalOpen(true)}
+      className="bg-gradient-to-r from-red-600 to-red-400 text-white px-5 py-2 rounded-lg shadow hover:scale-105 transition-all text-sm"
+    >
+      Change Password
+    </button>
+  </div>
 
-        <div>
-          <label className="block text-red-600 mb-1">Email</label>
-          <input
-            type="email"
-            name="email"
-            className="w-full border border-red-400 rounded px-3 py-2"
-            value={formData.email}
-            onChange={handleChange}
-          />
-        </div>
-        <div>
-          <label className="block text-red-600 mb-1">Phone Number</label>
-          <input
-            type="text"
-            name="phoneNumber"
-            className="w-full border border-red-400 rounded px-3 py-2"
-            value={formData.phoneNumber}
-            onChange={handleChange}
-          />
-        </div>
-
-        {user?.role === "Donor" && (
-          <div>
-            <label className="block text-red-600 mb-1">Blood Group</label>
-            <input
-              type="text"
-              name="bloodGroup"
-              className="w-full border border-red-400 rounded px-3 py-2"
-              value={formData.bloodGroup}
-              onChange={handleChange}
-            />
-          </div>
-        )}
-        {user?.role === "Hospital" && (
-          <div>
-            <label className="block text-red-600 mb-1">Hospital Name</label>
-            <input
-              type="text"
-              name="hospitalName"
-              className="w-full border border-red-400 rounded px-3 py-2"
-              value={formData.hospitalName}
-              onChange={handleChange}
-            />
-          </div>
-        )}
-        {user?.role === "Organisation" && (
-          <div>
-            <label className="block text-red-600 mb-1">Organisation Name</label>
-            <input
-              type="text"
-              name="organisationName"
-              className="w-full border border-red-400 rounded px-3 py-2"
-              value={formData.organisationName}
-              onChange={handleChange}
-            />
-          </div>
-        )}
-
-        {/* Country */}
-        <div>
-          <label className="block text-red-600 mb-1">Country</label>
-          <select
-            className="w-full border border-red-400 rounded px-3 py-2"
-            name="country"
-            value={formData.location.country}
-            onChange={handleChange}
-          >
-            {Country.getAllCountries().map((c) => (
-              <option key={c.isoCode} value={c.isoCode}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* State */}
-        <div>
-          <label className="block text-red-600 mb-1">State</label>
-          <select
-            className="w-full border border-red-400 rounded px-3 py-2"
-            name="state"
-            value={formData.location.state}
-            onChange={handleChange}
-          >
-            {State.getStatesOfCountry(formData.location.country).map((s) => (
-              <option key={s.isoCode} value={s.isoCode}>
-                {s.name}
-              </option>
-            ))}
-          </select>
-        </div>
-
-        {/* City */}
-        <div>
-          <label className="block text-red-600 mb-1">City</label>
-          <select
-  className="w-full border border-red-400 rounded px-3 py-2"
-  name="city"
-  value={formData.location.city}
-  onChange={handleChange}
->
-  {City.getCitiesOfState(
-    formData.location.country,
-    formData.location.state
-  ).map((c) => (
-    <option key={c.name} value={c.name}>
-      {c.name}
-    </option>
-  ))}
-</select>
-
-        </div>
-        <div className="mb-4">
-          <label className="block text-sm font-medium text-red-600">
-            Street Address / Location
-          </label>
-          <input
-            type="text"
-            name="streetAddress"
-            value={formData.streetAddress || ""}
-            onChange={(e) =>
-              setFormData({ ...formData, streetAddress: e.target.value })
-            }
-            className="mt-1 block w-full border border-red-500 rounded px-3 py-2"
-            placeholder="e.g. 56 Park Street"
-            required
-          />
-        </div>
-
-        
-        <ChangePasswordModal
-          isOpen={isPasswordModalOpen}
-          onClose={() => setPasswordModalOpen(false)}
-          onChangePassword={handlePasswordChange}
+  <form
+    onSubmit={handleSubmit}
+    className="grid grid-cols-1 md:grid-cols-2 gap-5"
+  >
+    {user.role === "Donor" && (
+      <div>
+        <label className="text-red-600 font-semibold mb-1 block">Name</label>
+        <input
+          type="text"
+          name="firstName"
+          className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+          value={formData.name}
+          onChange={handleChange}
         />
+      </div>
+    )}
 
-        <div className="col-span-1 md:col-span-2 text-center mt-4">
-          <button
-            type="submit"
-            className="bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-6 rounded"
-          >
-            Update Profile
-          </button>
-          <button
-            type="button"
-            onClick={() => navigate("/")}
-            className="w-full mt-2 bg-red-500 text-black py-2 rounded-lg hover:bg-red-700"
-          >
-            Back to Home
-          </button>
-        </div>
-      </form>
+    <div>
+      <label className="text-red-600 font-semibold mb-1 block">Email</label>
+      <input
+        type="email"
+        name="email"
+        className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+        value={formData.email}
+        onChange={handleChange}
+      />
     </div>
+
+    <div>
+      <label className="text-red-600 font-semibold mb-1 block">Phone Number</label>
+      <input
+        type="text"
+        name="phoneNumber"
+        className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+        value={formData.phoneNumber}
+        onChange={handleChange}
+      />
+    </div>
+
+    {user?.role === "Donor" && (
+      <div>
+        <label className="text-red-600 font-semibold mb-1 block">Blood Group</label>
+        <input
+          type="text"
+          name="bloodGroup"
+          className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+          value={formData.bloodGroup}
+          onChange={handleChange}
+        />
+      </div>
+    )}
+
+    {user?.role === "Hospital" && (
+      <div>
+        <label className="text-red-600 font-semibold mb-1 block">Hospital Name</label>
+        <input
+          type="text"
+          name="hospitalName"
+          className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+          value={formData.hospitalName}
+          onChange={handleChange}
+        />
+      </div>
+    )}
+
+    {user?.role === "Organisation" && (
+      <div>
+        <label className="text-red-600 font-semibold mb-1 block">Organisation Name</label>
+        <input
+          type="text"
+          name="organisationName"
+          className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+          value={formData.organisationName}
+          onChange={handleChange}
+        />
+      </div>
+    )}
+
+    {/* Country */}
+    <div>
+      <label className="text-red-600 font-semibold mb-1 block">Country</label>
+      <select
+        className="w-full border border-red-400 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+        name="country"
+        value={formData.location.country}
+        onChange={handleChange}
+      >
+        {Country.getAllCountries().map((c) => (
+          <option key={c.isoCode} value={c.isoCode}>
+            {c.name}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* State */}
+    <div>
+      <label className="text-red-600 font-semibold mb-1 block">State</label>
+      <select
+        className="w-full border border-red-400 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+        name="state"
+        value={formData.location.state}
+        onChange={handleChange}
+      >
+        {State.getStatesOfCountry(formData.location.country).map((s) => (
+          <option key={s.isoCode} value={s.isoCode}>
+            {s.name}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* City */}
+    <div>
+      <label className="text-red-600 font-semibold mb-1 block">City</label>
+      <select
+        className="w-full border border-red-400 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-red-500"
+        name="city"
+        value={formData.location.city}
+        onChange={handleChange}
+      >
+        {City.getCitiesOfState(
+          formData.location.country,
+          formData.location.state
+        ).map((c) => (
+          <option key={c.name} value={c.name}>
+            {c.name}
+          </option>
+        ))}
+      </select>
+    </div>
+
+    {/* Street Address */}
+    <div>
+      <label className="text-red-600 font-semibold mb-1 block">Street Address / Location</label>
+      <input
+        type="text"
+        name="streetAddress"
+        value={formData.streetAddress || ""}
+        onChange={(e) =>
+          setFormData({ ...formData, streetAddress: e.target.value })
+        }
+        className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+        placeholder="e.g. 56 Park Street"
+        required
+      />
+    </div>
+
+    {/* Password Modal */}
+    <ChangePasswordModal
+      isOpen={isPasswordModalOpen}
+      onClose={() => setPasswordModalOpen(false)}
+      onChangePassword={handlePasswordChange}
+    />
+
+    {/* Submit & Back Buttons */}
+    <div className="col-span-1 md:col-span-2 text-center mt-4 space-y-2 space-x-6">
+      <button
+        type="submit"
+        className="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-lg transition-transform hover:scale-105"
+      >
+        Update Profile
+      </button>
+      <button
+        type="button"
+        onClick={() => navigate("/")}
+        className="w-full md:w-auto bg-black text-white py-2 px-6 rounded-lg hover:bg-red-700 hover:text-white transition"
+      >
+        Back to Home
+      </button>
+    </div>
+  </form>
+</div>
+
   );
 };
 

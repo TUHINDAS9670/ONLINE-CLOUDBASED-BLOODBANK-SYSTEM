@@ -190,6 +190,7 @@ import impact from "../assets/Hero-Content-Images/impact.png";
 import EmergencyRequestModal from "../components/shared/modal/EmergencyRequestModal";
 import { useState } from "react";
 import { motion } from "framer-motion";
+import { FaFacebook, FaInstagram, FaLinkedin } from "react-icons/fa";
 
 
 const testimonials = [
@@ -258,6 +259,7 @@ const HomePage = () => {
           </button>
         </nav>
       </div>
+      
 
       {/* SLIDING TESTIMONIALS */}
       <div className="overflow-hidden mt-6 relative z-10">
@@ -287,6 +289,36 @@ const HomePage = () => {
           <p className="text-lg text-gray-200">– Austin O'Malley</p>
         </div>
       </div>
+    {/* VISION, MISSION, CORE VALUES */}
+<div className="text-white text-center mt-20 px-6 md:px-20 z-10 relative">
+  <h2 className="text-3xl font-bold mb-4 text-red-400">Our Vision, Mission and Core Values</h2>
+  <div className="w-24 h-1 bg-red-600 mx-auto mb-10"></div>
+
+  <div className="grid grid-cols-1 md:grid-cols-3 gap-8 text-center">
+    <div className="bg-black/60 p-6 rounded-lg shadow-lg border border-red-800">
+      <h6 className="text-xl font-semibold text-red-500 mb-2">Our Vision</h6>
+      <p className="text-gray-300">
+        Our vision is to create a world where no one has to suffer or lose a life due to the shortage of blood.
+        We strive to build a smart, responsive, and accessible blood bank management system that bridges the
+        gap between donors and recipients.
+      </p>
+    </div>
+    <div className="bg-black/60 p-6 rounded-lg shadow-lg border border-red-800">
+      <h6 className="text-xl font-semibold text-red-500 mb-2">Our Mission</h6>
+      <p className="text-gray-300">
+        To ensure timely and safe blood availability by streamlining donation, screening, and distribution through
+        technology. We aim to empower communities and foster a culture of life-saving blood donation.
+      </p>
+    </div>
+    <div className="bg-black/60 p-6 rounded-lg shadow-lg border border-red-800">
+      <h6 className="text-xl font-semibold text-red-500 mb-2">Core Values</h6>
+      <p className="text-gray-300">
+        Compassion, Transparency, Accountability, and Innovation guide our every effort. We value every donor and
+        every drop, working with integrity to serve those in need.
+      </p>
+    </div>
+  </div>
+</div>
 
       {/* EXPLORE SECTION */}
       <h2 className="text-2xl text-center mt-16 mb-6 text-red-500 font-bold underline tracking-wide z-10 relative">
@@ -391,12 +423,74 @@ const HomePage = () => {
       </div>
 
       {/* CONTACT US */}
-      <div className="bg-red-600 text-white text-center mt-20 py-10 z-10 relative">
-        <h2 className="text-3xl font-bold mb-4">Contact Us</h2>
-        <p className="text-lg">Phone: +91 90000 00000</p>
-        <p className="text-lg">Email: support@bloodbank.com</p>
-        <p className="text-lg">Address: 123 Blood Street, Life City, India</p>
+{/* CONTACT + FOOTER SECTION */}
+<footer className="bg-gradient-to-t from-black via-red-900 to-black text-white pt-12 px-6 md:px-20 z-10 relative" id="contact">
+  <div className="grid md:grid-cols-2 gap-10">
+    {/* Contact Info */}
+    <div>
+      <h2 className="text-3xl font-bold text-red-500 mb-4">Contact Us</h2>
+      <p className="mb-2 text-lg">📞 Phone: +91 98765 43210</p>
+      <p className="mb-2 text-lg">✉️ Email: bloodbank.help@gmail.com</p>
+      <p className="mb-4 text-lg">📍 Address: 123 Lifeline Street, RedCity, India</p>
+
+      {/* Social Media */}
+      <div className="flex gap-6 mt-6 text-2xl">
+        <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" className="hover:text-red-400">
+          <FaFacebook />
+        </a>
+        <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" className="hover:text-red-400">
+          <FaInstagram />
+        </a>
+        <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer" className="hover:text-red-400">
+          <FaLinkedin />
+        </a>
       </div>
+    </div>
+
+    {/* Contact Form */}
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        alert("Message sent! We'll contact you shortly.");
+      }}
+      className="bg-white text-black p-6 rounded-xl shadow-lg space-y-4"
+    >
+      <h3 className="text-2xl font-bold text-center text-red-600 mb-2">Send Us a Message</h3>
+      <input
+        type="text"
+        placeholder="Your Name"
+        required
+        className="w-full p-2 border border-red-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+      />
+      <input
+        type="email"
+        placeholder="Your Email"
+        required
+        className="w-full p-2 border border-red-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+      />
+      <textarea
+        rows="4"
+        placeholder="Your Message"
+        required
+        className="w-full p-2 border border-red-300 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+      />
+      <button
+        type="submit"
+        className="w-full bg-red-600 text-white py-2 rounded hover:bg-red-700 transition"
+      >
+        Send Message
+      </button>
+    </form>
+  </div>
+
+  {/* Footer Bottom */}
+  <div className="mt-12 border-t border-red-700 pt-6 text-center text-sm text-gray-300">
+    &copy; {new Date().getFullYear()} Blood Bank App. All rights reserved.
+  </div>
+</footer>
+
+
+
          {showModal && <EmergencyRequestModal onClose={() => setShowModal(false)} />}
     </div>
   );

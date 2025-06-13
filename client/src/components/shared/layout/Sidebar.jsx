@@ -8,6 +8,8 @@ import { FaBuildingNgo } from "react-icons/fa6";
 import { BsPeopleFill } from "react-icons/bs";
 import { IoIosPeople } from "react-icons/io";
 import { FaHospital } from "react-icons/fa6";
+import { MdDashboard } from "react-icons/md";
+import { FaHistory } from "react-icons/fa";
 
 import { useSelector } from "react-redux";
 const Sidebar = () => {
@@ -20,7 +22,7 @@ const Sidebar = () => {
         <div className="menu ">
           {user?.role === "Organisation" && (
             <>
-               <div
+              <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
                   location.pathname === "/"
                     ? "bg-red-500 text-white"
@@ -44,10 +46,10 @@ const Sidebar = () => {
                   to="/organisation/emergency-requests"
                   className="font-bold ml-[-22px]"
                 >
-                 Patient's Emergency Request
+                  Patient's Emergency Request
                 </Link>
               </div>
- <div
+              <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
                   location.pathname === "/organisation/donation-requests"
                     ? "bg-red-500 text-white"
@@ -80,7 +82,7 @@ const Sidebar = () => {
                   Hospital's Emergency Requests
                 </Link>
               </div>
-             
+
               <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg  pl-11 ${
                   location.pathname === "/donor"
@@ -107,7 +109,6 @@ const Sidebar = () => {
                   Hospital
                 </Link>
               </div>
-             
             </>
           )}
           {user?.role === "Admin" && (
@@ -200,16 +201,12 @@ const Sidebar = () => {
           {user?.role === "Hospital" && (
             <div
               className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
-                location.pathname === "/consumer" || location.pathname === "/"
+                location.pathname === "/hospital-blood-request" ||
+                location.pathname === "/"
                   ? "bg-red-500 text-white "
                   : "bg-gray-200 text-black"
               }`}
             >
-              {/* <BsPeopleFill className="lg:w-[80px] lg:h-[30px]  " />
-
-              <Link to="/consumer" className="font-bold ml-[-22px]">
-                Consumer
-              </Link> */}
               <BiDonateBlood className="lg:w-[80px] lg:h-[30px]" />
               <Link
                 to="/hospital-blood-request"
@@ -230,7 +227,7 @@ const Sidebar = () => {
                     : "bg-gray-200 text-black"
                 }`}
               >
-                <BsPeopleFill className="lg:w-[80px] lg:h-[30px]  " />
+                <FaHistory className="lg:w-[80px] lg:h-[30px]  " />
 
                 <Link to="/donation-list" className="font-bold ml-[-22px]">
                   Donation History
@@ -248,9 +245,14 @@ const Sidebar = () => {
                   Donation Request
                 </Link>
               </div>
-              <div>
-                <BiDonateBlood className="lg:w-[80px] lg:h-[30px]" />
-
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/donor-dashboard"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <MdDashboard className="lg:w-[80px] lg:h-[30px]" />
                 <Link to="/donor-dashboard" className="font-bold ml-[-22px]">
                   Dashboard
                 </Link>

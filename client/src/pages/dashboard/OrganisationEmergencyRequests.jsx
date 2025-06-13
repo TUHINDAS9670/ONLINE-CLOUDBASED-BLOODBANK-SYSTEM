@@ -30,7 +30,13 @@ const handleFilterChange = (e) => {
     }
   };
 
-
+const clearFilter=()=>{
+  setFilters({
+     bloodGroup: "",
+  urgency: "",
+  city: "",
+  })
+}
 const convertAddressCodesToNames = (request) => {
   const countryObj = Country.getCountryByCode(request.address?.country);
   const stateObj = State.getStateByCodeAndCountry(request.address?.state, request.address?.country);
@@ -125,6 +131,7 @@ const convertAddressCodesToNames = (request) => {
             <option key={city} value={city}>{city}</option>
           ))}
         </select>
+        <button className="p-3 text-lg text-white bg-red-500" onClick={clearFilter}>Clear Filters</button>
       </div>
       {filteredRequests.map((req) => (
         <div key={req._id} className="border p-4 rounded bg-white mb-4 shadow">

@@ -13,20 +13,36 @@ const PublicInventoryDashboard = () => {
     fetchInventory();
   }, [bloodGroup, stateFilter, cityFilter]);
 
-  const fetchInventory = async () => {
-    try {
-    const res= await API.post("/inventory/public-inventory", {
-  bloodGroup,
-  state: stateFilter,
-  city: cityFilter,
-});
+const fetchInventory = async () => {
+  try {
+    const res = await API.post("/inventory/public-inventory", {
+      bloodGroup,
+      state: stateFilter,
+      city: cityFilter,
+    });
 
-      console.log(res)
-      setBloodBanks(res.data || []);
-    } catch (error) {
-      console.error("Error fetching inventory", error);
-    }
-  };
+    // Convert state ISO to state name
+    const mapped = (res.data || []).map((item) => {
+      const stateName =
+        State.getStatesOfCountry("IN").find(
+          (s) => s.isoCode === item.state
+        )?.name || item.state;
+
+      return { ...item, state: stateName };
+    });
+    console.log(mapped)
+
+    setBloodBanks(mapped);
+  } catch (error) {
+    console.error("Error fetching inventory", error);
+  }
+};
+
+  const clearFilter =()=>{
+  setStateFilter("");
+  setCityFilter("");
+  setBloodGroup("")
+}
 
   return (
     <div className="min-h-screen bg-white px-4 py-10">
@@ -48,15 +64,17 @@ const PublicInventoryDashboard = () => {
 
         <select
           value={stateFilter}
-          onChange={(e) => {
-            setStateFilter(e.target.value);
-            setCityFilter(""); // reset city on state change
-          }}
+         onChange={(e) => {
+  const selectedIso = e.target.value;
+  setStateFilter(selectedIso); // store isoCode like "DL"
+  setCityFilter("");
+}}
+
           className="border-red-500 border px-4 py-2 rounded"
         >
           <option value="">Filter by State</option>
           {State.getStatesOfCountry("IN").map((s) => (
-            <option key={s.isoCode} value={s.name}>{s.name}</option>
+            <option key={s.isoCode} value={s.isoCode}>{s.name}</option>
           ))}
         </select>
 
@@ -67,11 +85,12 @@ const PublicInventoryDashboard = () => {
         >
           <option value="">Filter by City</option>
           {stateFilter &&
-            City.getCitiesOfState("IN", State.getStatesOfCountry("IN").find(s => s.name === stateFilter)?.isoCode)
+City.getCitiesOfState("IN", stateFilter)
               .map((c) => (
                 <option key={c.name} value={c.name}>{c.name}</option>
               ))}
         </select>
+<button className="p-3 text-lg text-white bg-red-500" onClick={clearFilter}>Clear Filters</button>
       </div>
 
       <div className="overflow-x-auto animate-fade-in">

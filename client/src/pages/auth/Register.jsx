@@ -142,29 +142,16 @@ const navigate=useNavigate();
       {loading ? (
         <Spinner />
       ) : (
-        <div>
-          <div className="flex flex-wrap gap-0">
-            <div className="w-full md:w-2/3">
-              <img
-                // src={old}
-                alt="loginImage"
-                className="w-full h-full object-cover"
-              />
-            </div>
+        <div className="min-h-screen bg-gradient-to-tr from-black via-red-700 to-black flex items-center justify-center relative overflow-hidden">
+          <div className="absolute w-96 h-96 bg-red-400 opacity-20 rounded-full blur-3xl animate-pulse -top-10 -left-20"></div>
+          <div className="absolute w-96 h-96 bg-red-500 opacity-30 rounded-full blur-3xl animate-ping top-32 right-0"></div>
 
-            <div className=" w-full md:w-1/3 h-full flex flex-col max-w-lg mx-auto p-6 bg-white shadow-lg rounded-md m-5 ">
-              <div className="border-b-2 border-red-400 ">
-                <h2 className="text-3xl font-bold text-center mb-1">
-                  Great Going!
-                </h2>
-
-                <h2 className="text-xl font-semibold text-center mb-2">
-                  Please Provide Further Details to Register as a {role}
-                </h2>
-              </div>
+          <div className="bg-white/19 backdrop-blur-md border border-red-300 shadow-2xl rounded-xl max-w-3xl w-full  flex flex-col p-8 z-10 text-white">
+            <h2 className="text-3xl font-bold text-center mb-2">Great Going!</h2>
+            <h3 className="text-xl font-semibold text-center mb-4">Please Provide Further Details to Register as a {role}</h3>
               {/* role checking */}
 
-              <div className="flex items-center justify-center m-5 font-bold text-gray-600 text-lg">
+              <div className="flex items-center justify-center m-5 font-bold text-white-600 text-lg">
                 <div className="mt-1 flex ">
                   <label className="ml-2">
                     <input
@@ -210,7 +197,7 @@ const navigate=useNavigate();
                     <div>
                       <label
                         htmlFor="firstname"
-                        className="block font-semibold text-gray-700"
+                        className="block font-semibold text-white"
                       >
                         First Name
                       </label>
@@ -220,13 +207,13 @@ const navigate=useNavigate();
                         value={formData.firstName}
                         placeholder="Enter your First Name"
                         onChange={handleChange}
-                        className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                        className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                       />
                     </div>
                     <div>
                       <label
                         htmlFor="lastname"
-                        className="block font-semibold text-gray-700"
+                        className="block font-semibold text-white"
                       >
                         Last Name
                       </label>
@@ -236,7 +223,7 @@ const navigate=useNavigate();
                         value={formData.lastName}
                         placeholder="Enter your Last Name"
                         onChange={handleChange}
-                        className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                        className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                       />
                     </div>
                   </div>
@@ -246,7 +233,7 @@ const navigate=useNavigate();
                     <div>
                       <label
                         htmlFor="hospitalname"
-                        className="block font-semibold text-gray-700"
+                        className="block font-semibold text-white"
                       >
                         Hospital Name
                       </label>
@@ -256,7 +243,7 @@ const navigate=useNavigate();
                         value={formData.hospitalName}
                         placeholder="Enter Hospital Name"
                         onChange={handleChange}
-                        className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                        className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                       />
                     </div>
                   </div>
@@ -266,7 +253,7 @@ const navigate=useNavigate();
                     <div>
                       <label
                         htmlFor="organisationname"
-                        className="block font-semibold text-gray-700"
+                        className="block font-semibold text-white"
                       >
                         Organisation Name
                       </label>
@@ -276,13 +263,13 @@ const navigate=useNavigate();
                         value={formData.organisationName}
                         placeholder="Enter Organisation Name"
                         onChange={handleChange}
-                        className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                        className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                       />
                     </div>
                   </div>
                 )}
                 <div>
-                  <label className="block font-semibold text-gray-700">
+                  <label className="block font-semibold text-white">
                     Email Address
                   </label>
                   <input
@@ -291,11 +278,11 @@ const navigate=useNavigate();
                     value={formData.email}
                     placeholder="Enter your email"
                     onChange={handleChange}
-                    className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                    className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-gray-700">
+                  <label className="block font-semibold text-white">
                     Password
                   </label>
                   <input
@@ -304,11 +291,11 @@ const navigate=useNavigate();
                     value={formData.password}
                     placeholder="Enter your password"
                     onChange={handleChange}
-                    className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                    className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                   />
                 </div>
                 <div>
-                  <label className="block font-semibold text-gray-700">
+                  <label className="block font-semibold text-white">
                     Phone Number
                   </label>
                   <input
@@ -317,7 +304,7 @@ const navigate=useNavigate();
                     value={formData.phoneNumber}
                     placeholder="Enter your contact number"
                     onChange={handleChange}
-                    className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                    className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                   />
                 </div>
                 {role !== "Admin" &&
@@ -328,7 +315,7 @@ const navigate=useNavigate();
                       <div>
                         <label
                           htmlFor="bloodgroup"
-                          className="block font-semibold text-gray-700"
+                          className="block font-semibold text-white"
                         >
                           Blood Group
                         </label>
@@ -338,14 +325,14 @@ const navigate=useNavigate();
                           value={formData.bloodGroup}
                           required
                           onChange={handleChange}
-                          className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                          className="border rounded-lg border-red-600  mt-1 w-full text-black p-2 shadow-lg"
                         >
-                          <option value="" className="text-gray-400">
+                          <option value="" className="text-black">
                             Select Your Blood Group
                           </option>
-                          <option value="A+">A+</option>
                           <option value="A-">A-</option>
                           <option value="B+">B+</option>
+                          <option value="A+">A+</option>
                           <option value="B-">B-</option>
                           <option value="AB+">AB+</option>
                           <option value="AB-">AB-</option>
@@ -356,7 +343,7 @@ const navigate=useNavigate();
                       <div>
                         <label
                           htmlFor="age"
-                          className="block font-semibold text-gray-700"
+                          className="block font-semibold text-white"
                         >
                           Age
                         </label>
@@ -367,21 +354,21 @@ const navigate=useNavigate();
                           min="18"
                           onChange={handleChange}
                           placeholder="Enter your age"
-                          className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                          className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                         />
                       </div>
                     </div>
                   )}
     
                 <div>
-                  <label className="block font-semibold text-gray-700">
+                  <label className="block font-semibold text-white">
                     Country
                   </label>
                   <select
                     name="country"
                     value={formData.country}
                     onChange={handleChange}
-                    className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                    className="border  border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                   >
                     {countries.map((country) => (
                       <option key={country.isoCode} value={country.isoCode}>
@@ -392,14 +379,14 @@ const navigate=useNavigate();
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700">
+                  <label className="block font-semibold text-white">
                     State
                   </label>
                   <select
                     name="state"
                     value={formData.state}
                     onChange={handleChange}
-                    className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                    className="border  rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                   >
                     <option value="">Select State</option>
                     {states.map((state) => (
@@ -411,14 +398,14 @@ const navigate=useNavigate();
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700">
+                  <label className="block font-semibold text-white">
                     District / City
                   </label>
                   <select
                     name="city"
                     value={formData.city}
                     onChange={handleChange}
-                    className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                    className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                   >
                     <option value="">Select City</option>
                     {cities.map((city) => (
@@ -430,7 +417,7 @@ const navigate=useNavigate();
                 </div>
 
                 <div>
-                  <label className="block font-semibold text-gray-700">
+                  <label className="block font-semibold text-white">
                     Location
                   </label>
                   <textarea
@@ -441,7 +428,7 @@ const navigate=useNavigate();
                     value={formData.location}
                     onChange={handleChange}
                     placeholder="Enter specific address e.g., House no., street name ,landmark"
-                    className="border border-red-600 mt-1 w-full p-2 shadow-lg shadow-red-100 rounded-lg"
+                    className="border rounded-lg border-red-600 mt-1 w-full text-black p-2 shadow-lg"
                   />
                 </div>
 
@@ -450,7 +437,7 @@ const navigate=useNavigate();
                   <div>
                     <label
                       htmlFor="gender"
-                      className="block font-semibold text-gray-700"
+                      className="block font-semibold text-white"
                     >
                       Gender
                     </label>
@@ -460,7 +447,7 @@ const navigate=useNavigate();
                           type="radio"
                           name="gender"
                           value="male"
-                          className="mr-2"
+                          className="mr-2 rounded-lg"
                           onChange={handleChange}
                           checked={formData.gender === "male"}
                         />
@@ -471,7 +458,7 @@ const navigate=useNavigate();
                           type="radio"
                           name="gender"
                           value="female"
-                          className="mr-2"
+                          className="mr-2 rounded-lg"
                           onChange={handleChange}
                           checked={formData.gender === "female"}
                         />
@@ -482,7 +469,7 @@ const navigate=useNavigate();
                           type="radio"
                           name="gender"
                           value="others"
-                          className="mr-2"
+                          className="mr-2 rounded-lg"
                           onChange={handleChange}
                           checked={formData.gender === "others"}
                         />
@@ -495,12 +482,12 @@ const navigate=useNavigate();
                 <div className="flex flex-col justify-center items-center">
                   <button
                     type="submit"
-                    className="mt-2 w-full bg-red-500 text-white py-2 px-4 rounded-md shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                className="w-full  bg-red-600 hover:bg-red-700 text-white py-2 rounded-lg font-semibold transition"
                   >
                     Register as {role}
                   </button>
                   <button
-                    className="mt-2 w-full bg-red-500 text-white py-2 px-4 rounded-md shadow hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                className="w-full  bg-white/20 hover:bg-white/30 text-white mt-3 py-2 rounded-lg font-semibold transition"
                     onClick={()=>{navigate("/")}}
                   >
                     Back to Home
@@ -515,7 +502,7 @@ const navigate=useNavigate();
               </form>
             </div>
           </div>
-        </div>
+        
       )}
     </>
   );
