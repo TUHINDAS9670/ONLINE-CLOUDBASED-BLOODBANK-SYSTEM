@@ -37,7 +37,6 @@ const res = await API.get(`/emergency/get-by-patient-id/${requestId.trim()}`);
       setError("No request found with that ID.");
     } finally {
       setLoading(false);
-      console.log(request)
     }
   };
   return (
@@ -113,6 +112,7 @@ const res = await API.get(`/emergency/get-by-patient-id/${requestId.trim()}`);
   </h4>
   <ul className="text-gray-700 dark:text-gray-200 space-y-1 text-sm">
     <li><strong>Request ID:</strong> {request.patientId}</li>
+    <li><strong>Request Email:</strong> {request.email}</li>
     <li><strong>Created At:</strong> {new Date(request.requestTimestamp).toLocaleString()}</li>
    <div className="space-y-2 text-sm text-gray-700 dark:text-gray-200">
   <p>
@@ -127,12 +127,12 @@ const res = await API.get(`/emergency/get-by-patient-id/${requestId.trim()}`);
       {request.approvedByOrganisation ? "Approved" : "Pending"}
     </span>
   </p>
-  <p>
+  {/* <p>
     <strong>Verified:</strong>{" "}
     <span className={`font-semibold ${request.verified ? "text-green-600" : "text-red-600"}`}>
       {request.verified ? "Verified" : "Not Verified"}
     </span>
-  </p>
+  </p> */}
 </div>
 
     <li><strong>Blood Group:</strong> {request.bloodGroup}</li>
@@ -145,6 +145,8 @@ const res = await API.get(`/emergency/get-by-patient-id/${requestId.trim()}`);
         <li><strong>Handled By:</strong> {request.handledBy.name}</li>
         <li><strong>Contact:</strong> {request.handledBy.contact}</li>
         <li><strong>Email:</strong> {request.handledBy.email}</li>
+        <li><strong>Address:</strong> {request.handledBy.address}</li>
+       
       </>
     )}
 
@@ -166,11 +168,11 @@ const res = await API.get(`/emergency/get-by-patient-id/${requestId.trim()}`);
   <div className="mt-5">
     <h5 className="font-semibold text-gray-600 dark:text-white mb-2">🕐 Progress</h5>
     <div className="flex justify-between text-xs text-white">
-      {["Submitted", "Under Review", "Accepted", "Fulfilled"].map((step, idx) => {
+      {["Submitted", "Under Review", "Accepted"].map((step, idx) => {
         const isComplete = (
           (request.status === "pending" && idx <= 0) ||
-          (request.status === "accepted_by_org" && idx <= 2) ||
-          (request.status === "fulfilled" && idx <= 3)
+          (request.status === "accepted_by_org" && idx <= 2) 
+          // (request.status === "fulfilled" && idx <= 3)
         );
         return (
           <div

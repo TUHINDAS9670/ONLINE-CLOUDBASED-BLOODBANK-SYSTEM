@@ -157,6 +157,7 @@ const BloodRequestSchema = new mongoose.Schema({
     name: String,
     contact: String,
     email: String,
+    address:String,
   },
 
   responseETA: {

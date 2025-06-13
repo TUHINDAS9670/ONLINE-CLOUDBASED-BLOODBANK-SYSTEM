@@ -30,6 +30,7 @@ import MyProfile from "./pages/dashboard/MyProfile";
 import EmergencyRequestStatusView from "./pages/admin/EmergencyRequestStatusView ";
 import AdminEmergencyRequests from "./pages/admin/AdminEmergencyRequests";
 import OrganisationEmergencyRequests from "./pages/dashboard/OrganisationEmergencyRequests";
+import OrganisationEmergencyRequestHistory from "./pages/dashboard/OrganisationEmergencyRequestHistory";
 
 function App() {
   return (
@@ -189,6 +190,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <OrganisationHospitalRequestsPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/organisation/request-history"
+            element={
+              <ProtectedRoute>
+                <OrganisationEmergencyRequestHistory />
               </ProtectedRoute>
             }
           />

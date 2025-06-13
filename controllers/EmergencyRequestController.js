@@ -4,26 +4,25 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const EmergencyRequest = require("../models/EmergencyRequestModel");
 const User = require("../models/userModel");
+const { sendApprovalEmail } = require("../utils/sendMail");
+
 
 const submitEmergencyRequest = async (req, res) => {
   try {
-    const {
-      fullName,
-      email,
-      phone,
-      bloodGroup,
-      urgency,
-      quantity,
-    } = req.body;
+    const { fullName, email, phone, bloodGroup, urgency, quantity } = req.body;
 
     const address = JSON.parse(req.body.address);
 
     if (!address || !address.country || !address.state || !address.city) {
-      return res.status(400).json({ success: false, message: "Incomplete address details." });
+      return res
+        .status(400)
+        .json({ success: false, message: "Incomplete address details." });
     }
 
     if (!req.file) {
-      return res.status(400).json({ success: false, message: "Document is required." });
+      return res
+        .status(400)
+        .json({ success: false, message: "Document is required." });
     }
 
     const patientId = uuidv4();
@@ -33,6 +32,26 @@ const submitEmergencyRequest = async (req, res) => {
 
     // Rename/move file from temp location to final destination
     fs.renameSync(req.file.path, destPath);
+    // Assuming you're using Mongoose and have imported your model
+    const lastRequest = await EmergencyRequest.findOne({
+      email: req.body.email,
+      phone: req.body.phone,
+    }).sort({ requestTimestamp: -1 });
+
+    if (lastRequest) {
+      const now = new Date();
+      const lastTime = new Date(lastRequest.requestTimestamp);
+      const hoursSince = (now - lastTime) / (1000 * 60 * 60); // convert ms to hours
+
+      if (hoursSince < 48) {
+        return res.status(400).json({
+          success: false,
+          message: `You can only submit one request every 48 hours. Please try again in ${Math.ceil(
+            48 - hoursSince
+          )} hour(s).`,
+        });
+      }
+    }
 
     const newRequest = new EmergencyRequest({
       patientId,
@@ -49,13 +68,20 @@ const submitEmergencyRequest = async (req, res) => {
 
     await newRequest.save();
 
-    res.status(200).json({ success: true, message: "Emergency request submitted.", patientId });
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Emergency request submitted.",
+        patientId,
+      });
   } catch (err) {
     console.error("Emergency request error:", err);
-    res.status(500).json({ success: false, message: "Server error. Try again later." });
+    res
+      .status(500)
+      .json({ success: false, message: "Server error. Try again later." });
   }
 };
-
 
 // const updateEmergencyRequestStatusByAdmin = async (req, res) => {
 //   try {
@@ -90,11 +116,18 @@ const updateEmergencyRequestStatusByAdmin = async (req, res) => {
     // 🔐 Verify admin
     const user = await User.findById(userId);
     if (!user || user.role !== "Admin") {
-      return res.status(403).json({ success: false, message: "Only admins can update request status" });
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Only admins can update request status",
+        });
     }
 
     if (!["admin_approved", "rejected_by_admin"].includes(status)) {
-      return res.status(400).send({ success: false, message: "Invalid status for admin" });
+      return res
+        .status(400)
+        .send({ success: false, message: "Invalid status for admin" });
     }
 
     const request = await EmergencyRequest.findByIdAndUpdate(
@@ -104,10 +137,14 @@ const updateEmergencyRequestStatusByAdmin = async (req, res) => {
     );
 
     if (!request) {
-      return res.status(404).send({ success: false, message: "Request not found" });
+      return res
+        .status(404)
+        .send({ success: false, message: "Request not found" });
     }
 
-    res.status(200).send({ success: true, message: "Admin status updated", data: request });
+    res
+      .status(200)
+      .send({ success: true, message: "Admin status updated", data: request });
   } catch (error) {
     console.error(error);
     res.status(500).send({ success: false, message: "Server error" });
@@ -124,7 +161,7 @@ const getAllEmergencyRequestsController = async (req, res) => {
   }
 };
 
- const approveOrRejectByAdmin = async (req, res) => {
+const approveOrRejectByAdmin = async (req, res) => {
   try {
     const { id } = req.params;
     const { action, adminRemarks } = req.body;
@@ -136,7 +173,9 @@ const getAllEmergencyRequestsController = async (req, res) => {
 
     const validActions = ["approve", "reject"];
     if (!validActions.includes(action)) {
-      return res.status(400).json({ success: false, message: "Invalid action" });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid action" });
     }
 
     const updatedFields =
@@ -151,7 +190,9 @@ const getAllEmergencyRequestsController = async (req, res) => {
     );
 
     if (!updatedRequest) {
-      return res.status(404).json({ success: false, message: "Request not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Request not found" });
     }
 
     res.status(200).json({
@@ -194,7 +235,6 @@ const getAllEmergencyRequestsController = async (req, res) => {
 //   }
 // };
 
-
 // const getAdminPendingRequests = async (req, res) => {
 //   try {
 // const userId = req.body.userId;
@@ -217,15 +257,23 @@ const getAdminPendingRequests = async (req, res) => {
     const userId = req.body.userId;
     const user = await User.findById(userId);
     if (!user || user.role !== "Admin") {
-      return res.status(403).json({ success: false, message: "Access denied: Admins only" });
+      return res
+        .status(403)
+        .json({ success: false, message: "Access denied: Admins only" });
     }
 
-    let requests = await EmergencyRequest.find({ status: "pending_admin" }).sort({ createdAt: -1 });
+    let requests = await EmergencyRequest.find({
+      status: "pending_admin",
+    }).sort({ createdAt: -1 });
 
     // 🛠️ Map and transform address codes to names
-    requests = requests.map(req => {
-      const countryName = Country.getCountryByCode(req.address?.country)?.name || req.address?.country;
-      const stateName = State.getStateByCodeAndCountry(req.address?.state, req.address?.country)?.name || req.address?.state;
+    requests = requests.map((req) => {
+      const countryName =
+        Country.getCountryByCode(req.address?.country)?.name ||
+        req.address?.country;
+      const stateName =
+        State.getStateByCodeAndCountry(req.address?.state, req.address?.country)
+          ?.name || req.address?.state;
       const cityName = req.address?.city || "";
 
       return {
@@ -234,8 +282,8 @@ const getAdminPendingRequests = async (req, res) => {
           country: countryName,
           state: stateName,
           city: cityName,
-          manualAddress: req.address?.manualAddress || ""
-        }
+          manualAddress: req.address?.manualAddress || "",
+        },
       };
     });
 
@@ -290,7 +338,12 @@ const getOrgEmergencyRequestsController = async (req, res) => {
     const countryCode = user.location?.country;
 
     if (!stateCode || !countryCode) {
-      return res.status(400).json({ success: false, message: "Incomplete organisation location info" });
+      return res
+        .status(400)
+        .json({
+          success: false,
+          message: "Incomplete organisation location info",
+        });
     }
 
     const requests = await EmergencyRequest.find({
@@ -298,7 +351,7 @@ const getOrgEmergencyRequestsController = async (req, res) => {
       $or: [
         { "address.state": stateCode },
         // { "address.country": countryCode }
-      ]
+      ],
     }).sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, requests });
@@ -314,32 +367,107 @@ const updateRequestByOrganisation = async (req, res) => {
 
     const user = await User.findById(userId);
     if (!user || user.role !== "Organisation") {
-      return res.status(403).json({ success: false, message: "Only organisations can perform this action." });
+      return res
+        .status(403)
+        .json({
+          success: false,
+          message: "Only organisations can perform this action.",
+        });
     }
-
+console.log(user)
     if (!["accepted_by_org", "rejected_by_org"].includes(status)) {
-      return res.status(400).json({ success: false, message: "Invalid status for organisation." });
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid status for organisation." });
     }
 
     const updatedRequest = await EmergencyRequest.findByIdAndUpdate(
       id,
       {
         status,
-        approvedByOrganisation: status === "accepted_by_org"
+        approvedByOrganisation: status === "accepted_by_org",
+        updatedBy: userId, 
+        
       },
       { new: true }
     );
+    
+ if (status === "accepted_by_org") {
+  updatedRequest.handledBy = {
+  name: user.organisationName,
+  contact: user.phoneNumber,
+  email: user.email,
+  address:user.location.full
+};
+
+await updatedRequest.save();
+
+ const orgDetails = {
+    name: user.organisationName,
+    contact: user.phoneNumber,
+  email: user.email,
+  address: user.location,
+    
+  };
+
+  await sendApprovalEmail(
+    updatedRequest.email,
+    updatedRequest.fullName,
+    updatedRequest.patientId,
+    orgDetails,
+  );
+}
+
 
     if (!updatedRequest) {
-      return res.status(404).json({ success: false, message: "Request not found" });
+      return res
+        .status(404)
+        .json({ success: false, message: "Request not found" });
     }
 
-    res.status(200).json({ success: true, message: "Request status updated by organisation", data: updatedRequest });
+    res
+      .status(200)
+      .json({
+        success: true,
+        message: "Request status updated by organisation",
+        data: updatedRequest,
+      });
   } catch (error) {
     console.error("Organisation request update error:", error);
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
+const getOrganisationHandledRequests = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    const user = await User.findById(userId).lean();
+    if (!user || user.role !== "Organisation") {
+      return res.status(403).json({
+        success: false,
+        message: "Unauthorized access: Invalid organisation ID",
+      });
+    }
+
+    const requests = await EmergencyRequest.find({
+      status: { $in: ["accepted_by_org", "rejected_by_org"] },
+      "handledBy.email": user.email,
+    }).lean();
+
+    return res.status(200).json({
+      success: true,
+      data: requests,
+    });
+  } catch (error) {
+    console.error("Error fetching organisation-handled requests:", error.message);
+    return res.status(500).json({
+      success: false,
+      message: "Server error while fetching requests",
+    });
+  }
+};
+
+
 
 const getRequestByPatientId = async (req, res) => {
   const { patientId } = req.params;
@@ -352,5 +480,14 @@ const getRequestByPatientId = async (req, res) => {
   res.status(200).json({ success: true, request });
 };
 
-
-module.exports = { submitEmergencyRequest, updateEmergencyRequestStatusByAdmin,getAllEmergencyRequestsController,approveOrRejectByAdmin,updateRequestByOrganisation,getAdminPendingRequests,getOrgEmergencyRequestsController,getRequestByPatientId};
+module.exports = {
+  submitEmergencyRequest,
+  updateEmergencyRequestStatusByAdmin,
+  getAllEmergencyRequestsController,
+  approveOrRejectByAdmin,
+  updateRequestByOrganisation,
+  getAdminPendingRequests,
+  getOrgEmergencyRequestsController,
+  getRequestByPatientId,
+  getOrganisationHandledRequests
+};

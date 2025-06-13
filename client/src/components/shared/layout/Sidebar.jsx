@@ -51,6 +51,21 @@ const Sidebar = () => {
               </div>
               <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/organisation/request-history"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <FaHospitalAlt className="lg:w-[80px] lg:h-[30px]" />
+                <Link
+                  to="/organisation/request-history"
+                  className="font-bold ml-[-22px]"
+                >
+                  Patient's Emergency Request History
+                </Link>
+              </div>
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
                   location.pathname === "/organisation/donation-requests"
                     ? "bg-red-500 text-white"
                     : "bg-gray-200 text-black"

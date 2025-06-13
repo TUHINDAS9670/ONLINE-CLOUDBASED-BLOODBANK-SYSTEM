@@ -143,6 +143,7 @@ const convertAddressCodesToNames = (request) => {
           <p><strong>Urgency:</strong> {req.urgency}</p>
           <p><strong>Quantity:</strong> {req.quantity}</p>
           <p><strong>Address:</strong> {`${req.address?.manualAddress}, ${req.address?.city}, ${req.address?.state}, ${req.address?.country}`}</p>
+          <p><strong>Request time :</strong> {req.requestTimestamp}</p>
           <a
             href={`http://localhost:3000/view-document/${req.documentUrl.split("/").pop()}`}
             target="_blank"

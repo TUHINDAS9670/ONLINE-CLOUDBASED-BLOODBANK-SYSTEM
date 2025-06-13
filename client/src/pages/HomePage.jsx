@@ -430,7 +430,7 @@ const HomePage = () => {
     <div>
       <h2 className="text-3xl font-bold text-red-500 mb-4">Contact Us</h2>
       <p className="mb-2 text-lg">📞 Phone: +91 98765 43210</p>
-      <p className="mb-2 text-lg">✉️ Email: bloodbank.help@gmail.com</p>
+      <p className="mb-2 text-lg">✉️ Email: apnabloodbank.noreply@gmail.com</p>
       <p className="mb-4 text-lg">📍 Address: 123 Lifeline Street, RedCity, India</p>
 
       {/* Social Media */}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import API from "../../services/API";
 import { toast } from "react-toastify";
 import Layout from "../../components/shared/layout/Layout";
+import moment from "moment";
 
 const OrganisationRequestsPage = () => {
   const [requests, setRequests] = useState([]);
@@ -10,6 +11,7 @@ const OrganisationRequestsPage = () => {
     try {
       const res = await API.get("/donations/incoming-requests");
       setRequests(res.data);
+      console.log(res.data)
     } catch (error) {
       toast.error("Failed to load requests");
     }
@@ -18,7 +20,7 @@ const OrganisationRequestsPage = () => {
     try {
       const res = await API.put(`/donations/request/${id}/status`, { status });
       toast.success(`Request ${status}`);
-      
+
       // ✅ Force a slight delay before fetching
       setTimeout(() => {
         fetchRequests();
@@ -27,8 +29,6 @@ const OrganisationRequestsPage = () => {
       toast.error("Failed to update status");
     }
   };
-  
-
 
   useEffect(() => {
     fetchRequests();
@@ -45,6 +45,7 @@ const OrganisationRequestsPage = () => {
               <th className="border p-2">Blood Group</th>
               <th className="border p-2">Quantity</th>
               <th className="border p-2">Disease</th>
+              <th className="border p-2">Time</th>
               <th className="border p-2">Status</th>
               <th className="border p-2">Action</th>
             </tr>
@@ -56,6 +57,9 @@ const OrganisationRequestsPage = () => {
                 <td className="border p-2">{req.bloodGroup}</td>
                 <td className="border p-2">{req.quantity} ml</td>
                 <td className="border p-2">{req.disease || "N/A"}</td>
+                <td className=" border px-4 py-2 b">
+                  {moment(req.date).format("DD/MM/YYYY hh:mm A")}
+                </td>{" "}
                 <td className="border p-2">{req.status}</td>
                 <td className="border p-2">
                   {req.status === "pending" && (

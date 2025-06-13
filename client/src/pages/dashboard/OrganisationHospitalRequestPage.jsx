@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import API from "../../services/API";
 import { toast } from "react-toastify";
 import Layout from "../../components/shared/layout/Layout";
+import moment from "moment";
 
 const OrganisationHospitalRequestsPage = () => {
   const [requests, setRequests] = useState([]);
@@ -17,15 +18,19 @@ const OrganisationHospitalRequestsPage = () => {
     }
   };
 
-  const handleStatusChange = async (id, status,remarks) => {
+  const handleStatusChange = async (id, status, remarks) => {
     try {
-      await API.put(`/hospital-requests/request/${id}/status`, { status,remarks });
+      await API.put(`/hospital-requests/request/${id}/status`, {
+        status,
+        remarks,
+      });
       toast.success(`Request ${status}`);
       setTimeout(fetchRequests, 300); // slight delay for UI sync
     } catch (err) {
-  const errorMessage = err.response?.data?.message || "Failed to approve request";
-  toast.error(errorMessage); // Shows: “Not enough blood available...”
-}
+      const errorMessage =
+        err.response?.data?.message || "Failed to approve request";
+      toast.error(errorMessage); // Shows: “Not enough blood available...”
+    }
   };
 
   useEffect(() => {
@@ -45,6 +50,7 @@ const OrganisationHospitalRequestsPage = () => {
               <th className="border p-2">Blood Group</th>
               <th className="border p-2">Quantity</th>
               <th className="border p-2">Reason</th>
+              <th className="border p-2">Time</th>
               <th className="border p-2">Status</th>
               <th className="border p-2">Action</th>
             </tr>
@@ -67,6 +73,9 @@ const OrganisationHospitalRequestsPage = () => {
                   <td className="border p-2">{req.bloodGroup}</td>
                   <td className="border p-2">{req.quantity} ml</td>
                   <td className="border p-2">{req.reason || "N/A"}</td>
+                  <td className="px-4 py-2 border-b">
+                    {moment(req.createdAt).format("DD/MM/YYYY hh:mm A")}
+                  </td>{" "}
                   <td className="border p-2">{req.status}</td>
                   <td className="border p-2">
                     {req.status === "pending" && (
@@ -80,17 +89,26 @@ const OrganisationHospitalRequestsPage = () => {
                           Approve
                         </button>
                         <select
-  onChange={(e) =>
-    handleStatusChange(req._id, "rejected", e.target.value)
-  }
-  className="border px-2 py-1 text-sm"
->
-  <option value="">Reject With Reason</option>
-  <option value="Insufficient blood stock">Insufficient blood stock</option>
-  <option value="Invalid request details">Invalid request details</option>
-  <option value="Duplicate request">Duplicate request</option>
-</select>
-
+                          onChange={(e) =>
+                            handleStatusChange(
+                              req._id,
+                              "rejected",
+                              e.target.value
+                            )
+                          }
+                          className="border px-2 py-1 text-sm"
+                        >
+                          <option value="">Reject With Reason</option>
+                          <option value="Insufficient blood stock">
+                            Insufficient blood stock
+                          </option>
+                          <option value="Invalid request details">
+                            Invalid request details
+                          </option>
+                          <option value="Duplicate request">
+                            Duplicate request
+                          </option>
+                        </select>
                       </>
                     )}
                   </td>
