@@ -17,8 +17,8 @@ const HomePageUserBased = () => {
 
   // Handle user redirection based on role
   useEffect(() => {
-    if (user?.role === "Admin") navigate("/admin/adminHome");
-    else if (user?.role === "Donor") navigate("/donation-request");
+    // if (user?.role === "Admin") navigate("/admin/adminHome");
+    if (user?.role === "Donor") navigate("/donation-request");
     else if (user?.role === "Hospital") navigate("/organisation");
   }, [user, navigate]);
 
@@ -27,6 +27,7 @@ const HomePageUserBased = () => {
       const response = await API.get("/inventory/get-inventory");
       if (response?.data?.success) {
         setData(response.data.inventory);
+        console.log(response.data.inventory);
       }
     } catch (error) {
       console.error(error);
@@ -64,20 +65,42 @@ const HomePageUserBased = () => {
               <table className="min-w-full table-auto border-collapse">
                 <thead className="bg-gray-100">
                   <tr>
-                    <th className="px-4 py-2 border-b text-left">Blood Group</th>
-                    <th className="px-4 py-2 border-b text-left">Inventory Type</th>
+                    <th className="px-4 py-2 border-b text-left">Identity</th>
+                    <th className="px-4 py-2 border-b text-left">
+                      Blood Group
+                    </th>
+                    <th className="px-4 py-2 border-b text-left">
+                      Inventory Type
+                    </th>
                     <th className="px-4 py-2 border-b text-left">Quantity</th>
-                    <th className="px-4 py-2 border-b text-left">Donor Email</th>
-                    <th className="px-4 py-2 border-b text-left">Time & Date</th>
+                    <th className="px-4 py-2 border-b text-left">Email</th>
+                    <th className="px-4 py-2 border-b text-left">
+                      Time & Date
+                    </th>
                   </tr>
                 </thead>
                 <tbody>
                   {data?.map((record) => (
                     <tr key={record._id} className="hover:bg-gray-50">
-                      <td className="px-4 py-2 border-b">{record.bloodGroup}</td>
-                      <td className="px-4 py-2 border-b">{record.inventoryType}</td>
-                      <td className="px-4 py-2 border-b">{record.quantity} (ML)</td>
-                      <td className="px-4 py-2 border-b">{record.email}</td>
+                      <td>
+                        {record.inventoryType === "in"
+                          ? "Donor"
+                          : record.requesterType || "Hospital"}{" "}
+                        {/* Use the requesterType field */}
+                      </td>
+
+                      <td className="px-4 py-2 border-b">
+                        {record.bloodGroup}
+                      </td>
+                      <td className="px-4 py-2 border-b">
+                        {record.inventoryType}
+                      </td>
+                      <td className="px-4 py-2 border-b">
+                        {record.quantity} (ML)
+                      </td>
+                      <td className="px-4 py-2 border-b">
+                        {record.email }
+                      </td>
                       <td className="px-4 py-2 border-b">
                         {moment(record.createdAt).format("DD/MM/YYYY hh:mm A")}
                       </td>
@@ -96,4 +119,4 @@ const HomePageUserBased = () => {
   );
 };
 
-export default  HomePageUserBased;
+export default HomePageUserBased;

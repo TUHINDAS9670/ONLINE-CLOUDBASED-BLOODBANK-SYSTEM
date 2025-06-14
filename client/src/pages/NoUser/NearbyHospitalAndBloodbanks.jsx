@@ -368,13 +368,13 @@ const NearbyHospitals = () => {
           className="rounded shadow hover:opacity-80 transition-opacity duration-200"
         /> */}
                   </a>
-                  <p>
+                  {/* <p>
                     {" "}
-                    Distance : {(place.properties.distance / 1000).toFixed(
+                    Distance : {(place.properties.distance).toFixed(
                       2
                     )}{" "}
                     km away
-                  </p>
+                  </p> */}
                 </div>
                 <p>Type: {place.properties.categories?.join(", ")}</p>
                 {place.properties.contact?.phone && (

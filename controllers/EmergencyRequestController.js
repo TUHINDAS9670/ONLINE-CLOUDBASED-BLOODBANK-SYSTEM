@@ -350,7 +350,7 @@ const getOrgEmergencyRequestsController = async (req, res) => {
       status: "admin_approved",
       $or: [
         { "address.state": stateCode },
-        // { "address.country": countryCode }
+        { "address.country": countryCode }
       ],
     }).sort({ createdAt: -1 });
 

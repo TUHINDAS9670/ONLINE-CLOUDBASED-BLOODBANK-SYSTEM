@@ -9,10 +9,12 @@ const createInventoryController=async(req,res)=>{
     try {
       const{email}=req.body
       //validation
-      const user=await userModel.findOne({email})
-      if(!user){
-        throw new Error ('User Not Found')
+    
+            const user=await userModel.findOne({email})
+      if(req.body.inventoryType==="in" && user.role!=="Donor"){
+        throw new Error ('Donor aaccount not found.Register as a Donor first!')
       }
+     
       // if(inventoryType==="in" && user.role !=='donor'){
       //   throw new Error ('Not a donor account')
       // }
@@ -20,55 +22,63 @@ const createInventoryController=async(req,res)=>{
       // {
       //   throw new ErrorEvent('Not a hospital')
       // }
-      if(req.body.inventoryType=='out'){
-        const requestedBloodGroup=req.body.bloodGroup;
-        const requestedQuantityOfBloodGroup=req.body.quantity;
-        const organisation = new mongoose.Types.ObjectId(req.body.userId)
-        //calculate Blood Quantity
-        const totalInOfRequestedBloodGroup=await inventoryModel.aggregate([
-          {$match:{
-            organisation,
-            inventoryType:'in',
-            bloodGroup:requestedBloodGroup
-          }},{
-            $group:{
-              _id:'$bloodGroup',
-              total:{$sum:'$quantity'}
-            },
-          },
-        ]);
-        console.log("Total In",totalInOfRequestedBloodGroup);
-        const totalIn=totalInOfRequestedBloodGroup[0]?.total || 0;
-        //calculate OUT blood Quantity
-        const totalOutOfRequestedBloodGroup=await inventoryModel.aggregate([
-          {$match:{
-            organisation,
-            inventoryType:'out',
-            bloodGroup:requestedBloodGroup
-          }},
-          {
-            $group:{
-              _id:'$bloodGroup',
-              total:{$sum:'$quantity'}
-            }
-          }
-        ])
-        const totalOut=totalOutOfRequestedBloodGroup[0]?.total || 0;
-        //in & out calc
-        const availableQuantityOfBloodGroup=totalIn-totalOut; 
-        
-        //quality validation
-        if(availableQuantityOfBloodGroup<requestedQuantityOfBloodGroup){
-          return res.status(500).send({
-            success:false,
-            message:`only ${availableQuantityOfBloodGroup} ML of ${requestedQuantityOfBloodGroup.toUpperCase()} is available`
-          })
-        }
-        req.body.hospital=user?._id;
+     if (req.body.inventoryType === 'out') {
+  const requestedBloodGroup = req.body.bloodGroup;
+  const requestedQuantityOfBloodGroup = req.body.quantity;
+  const organisation = new mongoose.Types.ObjectId(req.body.userId);
+
+  const totalInOfRequestedBloodGroup = await inventoryModel.aggregate([
+    {
+      $match: {
+        organisation,
+        inventoryType: 'in',
+        bloodGroup: requestedBloodGroup
       }
-      else{
-        req.body.donor=user?._id;
+    },
+    {
+      $group: {
+        _id: '$bloodGroup',
+        total: { $sum: '$quantity' }
       }
+    }
+  ]);
+
+  const totalIn = totalInOfRequestedBloodGroup[0]?.total || 0;
+
+  const totalOutOfRequestedBloodGroup = await inventoryModel.aggregate([
+    {
+      $match: {
+        organisation,
+        inventoryType: 'out',
+        bloodGroup: requestedBloodGroup
+      }
+    },
+    {
+      $group: {
+        _id: '$bloodGroup',
+        total: { $sum: '$quantity' }
+      }
+    }
+  ]);
+
+  const totalOut = totalOutOfRequestedBloodGroup[0]?.total || 0;
+  const availableQuantityOfBloodGroup = totalIn - totalOut;
+
+  if (availableQuantityOfBloodGroup < requestedQuantityOfBloodGroup) {
+    return res.status(500).send({
+      success: false,
+      message: `Only ${availableQuantityOfBloodGroup} ML of ${requestedBloodGroup.toUpperCase()} is available`
+    });
+  }
+
+  req.body.hospital = user?._id;
+
+  // 🔥 NEW: set requesterType
+  req.body.requesterType = user.role === "Hospital" ? "Hospital" : "Patient";
+} else {
+  req.body.donor = user?._id;
+}
+
       // if all validation checks successfully  then save record
       const inventory=new inventoryModel(req.body)
       await inventory.save()

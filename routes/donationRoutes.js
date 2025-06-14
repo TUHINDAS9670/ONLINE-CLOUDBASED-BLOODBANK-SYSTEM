@@ -7,7 +7,7 @@ const {
   getOrganisationDonationRequests,
   updateDonationRequest,
   deleteDonationRequest,
-  getDonorStats
+  getDonorStats,getOrg
 } = require('../controllers/donationController');
 const {authMiddleware} = require('../middlewares/authMiddleware');
 
@@ -26,6 +26,7 @@ router.put('/request/:id', authMiddleware, updateDonationRequest);
 router.delete('/request/:id', authMiddleware, deleteDonationRequest);
 //routes for donor's donation dashboard
 router.get("/my-stats", authMiddleware, getDonorStats);
-  
+  router.post("/filter-orgs",authMiddleware, getOrg);
+
 
 module.exports = router;

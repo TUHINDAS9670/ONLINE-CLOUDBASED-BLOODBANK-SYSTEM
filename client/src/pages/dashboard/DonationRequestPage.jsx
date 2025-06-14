@@ -15,14 +15,31 @@ const DonationRequestPage = () => {
     quantity: "",
   });
 
-  const fetchOrganisations = async () => {
-    try {
-      const res = await API.get("/admin/org-list");
-      if (res.data.success) setOrganisations(res.data.orgData);
-    } catch (error) {
-      toast.error("Failed to load organisations");
-    }
-  };
+  // const fetchOrganisations = async () => {
+  //   try {
+  //     const res = await API.get("/admin/org-list");
+  //     if (res.data.success) setOrganisations(res.data.orgData);
+  //   } catch (error) {
+  //     toast.error("Failed to load organisations");
+  //   }
+  // };
+const fetchOrganisations = async () => {
+  try {
+    const res = await API.post("/donations/filter-orgs", {
+      country: user.location.country,
+      state: user.location.state,
+    });
+    if (res.data.success) {
+         setOrganisations(res.data.orgData);
+       } else {
+         toast.error("Failed to load organisations");
+       }
+     } catch (error) {
+       toast.error("Failed to load organisations");
+     }
+};
+
+
 
   const fetchRequests = async () => {
     try {
@@ -113,7 +130,7 @@ const DonationRequestPage = () => {
             <option value="">Select Organisation</option>
             {organisations.map((org) => (
               <option key={org._id} value={org._id}>
-                {org.organisationName || org.name}
+                {org.organisationName || org.name}, &nbsp; {org.location.full}
               </option>
             ))}
           </select>
@@ -143,6 +160,9 @@ const DonationRequestPage = () => {
                 <th className="p-2 border">Blood Group</th>
                 <th className="p-2 border">Quantity</th>
                 <th className="p-2 border">Organisation</th>
+                <th className="p-2 border">Contact</th>
+                <th className="p-2 border">Email</th>
+                <th className="p-2 border">Address</th>
                 <th className="p-2 border">Disease</th>
                 <th className="p-2 border">Status</th>
                 <th className="p-2 border">Actions</th>
@@ -154,6 +174,9 @@ const DonationRequestPage = () => {
                   <td className="p-2 border">{req.bloodGroup}</td>
                   <td className="p-2 border">{req.quantity} ml</td>
                   <td className="p-2 border">{req.organisation?.organisationName || "N/A"}</td>
+                  <td className="p-2 border">{req.organisation?.phoneNumber || "N/A"}</td>
+                  <td className="p-2 border">{req.organisation?.email || "N/A"}</td>
+                  <td className="p-2 border">{req.organisation?.location.full || "N/A"}</td>
                   <td className="p-2 border">{req.disease || "N/A"}</td>
                   <td className="p-2 border capitalize">{req.status}</td>
                   <td className="p-2 border">

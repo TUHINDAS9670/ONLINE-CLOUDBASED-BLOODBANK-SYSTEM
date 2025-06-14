@@ -42,6 +42,9 @@ const OrganisationRequestsPage = () => {
           <thead className="bg-gray-100">
             <tr>
               <th className="border p-2">Donor</th>
+              <th className="border p-2">Donor Email</th>
+              <th className="border p-2">Donor Phone</th>
+              <th className="border p-2">Donor Address</th>
               <th className="border p-2">Blood Group</th>
               <th className="border p-2">Quantity</th>
               <th className="border p-2">Disease</th>
@@ -54,6 +57,9 @@ const OrganisationRequestsPage = () => {
             {requests.map((req) => (
               <tr key={req._id}>
                 <td className="border p-2">{req.donor?.name}</td>
+                <td className="border p-2">{req.donor?.email}</td>
+                <td className="border p-2">{req.donor?.phoneNumber}</td>
+                <td className="border p-2">{req.donor?.location.full}</td>
                 <td className="border p-2">{req.bloodGroup}</td>
                 <td className="border p-2">{req.quantity} ml</td>
                 <td className="border p-2">{req.disease || "N/A"}</td>

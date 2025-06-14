@@ -35,6 +35,8 @@ app.use('/api/v1/hospital-requests', require('./routes/HospitalBloodRequestContr
 
 // app.use("/api/v1/notifications", require("./routes/notificationRoute"));
 app.use("/api/v1/emergency", require("./routes/emergencyRequestRoutes"));
+app.use("/api/v1/emergency-donor", require("./routes/emergencyDonorRoutes"));
+
 
 //static folder
 //PORT

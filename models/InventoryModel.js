@@ -34,6 +34,14 @@ hospital:{
     return this.inventoryType=='out'
   }
 },
+requesterType: {
+  type: String,
+  enum: ["Hospital", "Patient"],
+  required: function () {
+    return this.inventoryType === "out";
+  }
+},
+
 
 donor:{
   type:mongoose.Schema.Types.ObjectId,

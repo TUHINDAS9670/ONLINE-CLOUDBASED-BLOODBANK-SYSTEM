@@ -4,27 +4,35 @@ import API from "../../../services/API";
 // import API from "../../../services/API";
 import { useSelector } from "react-redux";
 
-const Modal = ({ isOpen, onClose}) => {
+const Modal = ({ isOpen, onClose }) => {
   if (!isOpen) return null; // Render nothing if the modal is closed
   const { user } = useSelector((state) => state.auth);
   const [inventoryType, setInventoryType] = useState("in");
   const [bloodGroup, setBloodGroup] = useState("");
-  const [quantity, setQuantity] = useState(0);
+  const [quantity, setQuantity] = useState();
   const [email, setEmail] = useState("");
+  const [requesterType, setRequesterType] = useState("Patient"); // NEW
+
   // handle modal data
   const handleModalSubmit = async () => {
     try {
       if (!bloodGroup || !quantity) {
         return alert("Please Provide All Fields");
       }
-      const { data } = await API.post("/inventory/create-inventory", {
-       
+      const payload = {
         email,
         organisation: user?._id,
         inventoryType,
         bloodGroup,
         quantity,
-      });
+      };
+
+      if (inventoryType === "out") {
+        payload.requesterType = requesterType; // Include role info
+      }
+
+      const { data } = await API.post("/inventory/create-inventory", payload);
+
       if (data?.success) {
         alert("New Record Created");
         window.location.reload();
@@ -99,15 +107,42 @@ const Modal = ({ isOpen, onClose}) => {
             <option value={"B-"}>B-</option>
           </select>
 
-          <InputType
-            labelText={"Donar Email"}
-            labelFor={"email"}
-            inputType={"email"}
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="mt-4 block w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
-          />
-
+          {inventoryType == "out" && (
+            <>
+              <div className="mb-4">
+                <label className="block mb-1 font-medium text-sm">Request By</label>
+                <select
+                  className="form-select block w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+                  value={requesterType}
+                  onChange={(e) => setRequesterType(e.target.value)}
+                >
+                  <option value="Patient">Patient</option>
+                  <option value="Hospital">Hospital</option>
+                </select>
+              </div>
+            <InputType
+                labelText={`${requesterType} Email`}
+                labelFor={"email"}
+                inputType={"email"}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-1 block w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              />
+            
+            </>
+          )}
+          {inventoryType == "in" && (
+            <>
+              <InputType
+                labelText={"Donor Email"}
+                labelFor={"email"}
+                inputType={"email"}
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="mt-4 block w-full p-2.5 bg-white border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
+              />
+            </>
+          )}
           <InputType
             labelText={"Quantity (ML)"}
             labelFor={"quantity"}
@@ -120,15 +155,11 @@ const Modal = ({ isOpen, onClose}) => {
 
         {/* Modal Footer */}
         <div className="flex justify-end space-x-4 border-t p-4">
-          <button
-            className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300"
-            
-          >
+          <button className="px-4 py-2 bg-gray-200 rounded hover:bg-gray-300">
             Close
           </button>
           <button
             className="px-4 py-2 bg-red-500 text-white rounded hover:bg-blue-600"
-            
             onClick={handleModalSubmit}
           >
             Save Changes

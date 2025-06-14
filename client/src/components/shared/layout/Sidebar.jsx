@@ -36,7 +36,7 @@ const Sidebar = () => {
               </div>
               <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
-                  location.pathname === "/emergency-requests-dashboard"
+                  location.pathname === "/organisation/emergency-requests"
                     ? "bg-red-500 text-white"
                     : "bg-gray-200 text-black"
                 }`}
@@ -49,7 +49,7 @@ const Sidebar = () => {
                   Patient's Emergency Request
                 </Link>
               </div>
-              <div
+              {/* <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
                   location.pathname === "/organisation/request-history"
                     ? "bg-red-500 text-white"
@@ -63,7 +63,7 @@ const Sidebar = () => {
                 >
                   Patient's Emergency Request History
                 </Link>
-              </div>
+              </div> */}
               <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
                   location.pathname === "/organisation/donation-requests"
@@ -130,7 +130,7 @@ const Sidebar = () => {
             <>
               <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
-                  location.pathname === "/emergency-requests-dashboard"
+                  location.pathname === "/admin/emergency-requests"
                     ? "bg-red-500 text-white"
                     : "bg-gray-200 text-black"
                 }`}
@@ -248,6 +248,21 @@ const Sidebar = () => {
                   Donation History
                 </Link>
               </div>
+              {/* <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/donation-list"
+                    ? "bg-red-500 text-white "
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <FaHistory className="lg:w-[80px] lg:h-[30px]  " />
+
+                <li>
+                  <Link to="/donor/emergency-requests" className="font-bold ml-[-22px]">
+                    Emergency Requests
+                  </Link>
+                </li>
+              </div> */}
               <div
                 className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
                   location.pathname === "/donation-request"

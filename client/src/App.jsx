@@ -31,6 +31,7 @@ import EmergencyRequestStatusView from "./pages/admin/EmergencyRequestStatusView
 import AdminEmergencyRequests from "./pages/admin/AdminEmergencyRequests";
 import OrganisationEmergencyRequests from "./pages/dashboard/OrganisationEmergencyRequests";
 import OrganisationEmergencyRequestHistory from "./pages/dashboard/OrganisationEmergencyRequestHistory";
+import DonorEmergencyRequestPage from "./pages/dashboard/DonorEmergencyRequestPage";
 
 function App() {
   return (
@@ -201,6 +202,16 @@ function App() {
               </ProtectedRoute>
             }
           />
+          <Route
+            path="/donor/emergency-requests"
+            element={
+              <ProtectedRoute>
+                <DonorEmergencyRequestPage />
+              </ProtectedRoute>
+            }
+          />
+          
+
           <Route
             path="/admin/adminHome"
             element={

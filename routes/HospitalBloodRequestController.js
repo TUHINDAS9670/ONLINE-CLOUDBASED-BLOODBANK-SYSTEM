@@ -7,8 +7,10 @@ const {
   getOrganisationHospitalRequests,
   updateHospitalRequest,
   deleteHospitalRequest,
+  getOrg
 } = require('../controllers/HospitalBloodRequestController');
 const { authMiddleware } = require('../middlewares/authMiddleware');
+
 
 // Hospital creates request
 router.post('/request', authMiddleware, createHospitalRequest);
@@ -25,5 +27,6 @@ router.put('/request/:id/status', authMiddleware, updateHospitalRequestStatus);
 // Hospital edits or deletes own request (if pending)
 router.put('/request/:id', authMiddleware, updateHospitalRequest);
 router.delete('/request/:id', authMiddleware, deleteHospitalRequest);
+router.post("/filter-orgs", authMiddleware, getOrg);
 
 module.exports = router;

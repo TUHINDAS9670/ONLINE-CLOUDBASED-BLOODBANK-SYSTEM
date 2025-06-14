@@ -35,59 +35,58 @@ const navigate=useNavigate();
   const [cities, setCities] = useState([]);
   
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    // console.log("Form submitted", formData);
+ const handleSubmit = (e) => {
+  e.preventDefault();
 
-    // Construct full address string
-    const fullAddress = {
-      country: Country.getCountryByCode(formData.country)?.name || formData.country,
-      state: State.getStateByCodeAndCountry(formData.state, formData.country)?.name || formData.state,
-      district: formData.city,
-      city: formData.city,
-      location: formData.location,
-      full: `${Country.getCountryByCode(formData.country)?.name || formData.country}, ${State.getStateByCodeAndCountry(formData.state, formData.country)?.name || formData.state}, ${formData.city}, ${formData.location}`,
-    };
-    
-    const {
-      country, state, city, location, // exclude address fields from root
-      ...restFormData
-    } = formData;
-    const submissionData = {
-      ...restFormData,
-      
-      location: fullAddress,
-    };
+  const countryName = Country.getCountryByCode(formData.country)?.name || formData.country;
+  const stateName = State.getStateByCodeAndCountry(formData.state, formData.country)?.name || formData.state;
 
-
- console.log("Final Submission Data:", submissionData);
-    try {
-      dispatch(userRegister(submissionData));
-    } catch (error) {
-      console.log(error);
-    }
-
-    // Reset the form
-    setFormData({
-      firstName: "",
-      lastName: "",
-      email: "",
-      password: "",
-      phoneNumber: "",
-      hospitalName: "",
-      organisationName: "",
-      gender: "",
-      bloodGroup: "",
-      age: "",
-      country: "IN",
-      state: "",
-      city: "",
-      location: "",
-      role: "Donor",
-    });
-
-    setRole("Donor");
+  const fullAddress = {
+    country: countryName,
+    state: stateName,
+    district: formData.city,
+    city: formData.city,
+    location: formData.location,
+    full: `${formData.location}, ${formData.city}, ${stateName}, ${countryName}`,
   };
+
+  const {
+    country, state, city, location,
+    ...restFormData
+  } = formData;
+
+  const submissionData = {
+    ...restFormData,
+    location: fullAddress,
+  };
+
+  try {
+    dispatch(userRegister(submissionData));
+  } catch (error) {
+    console.log(error);
+  }
+
+  setFormData({
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    phoneNumber: "",
+    hospitalName: "",
+    organisationName: "",
+    gender: "",
+    bloodGroup: "",
+    age: "",
+    country: "IN",
+    state: "",
+    city: "",
+    location: "",
+    role: "Donor",
+  });
+
+  setRole("Donor");
+};
+
 
   // Handle input changes
   const handleChange = (e) => {

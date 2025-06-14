@@ -145,25 +145,29 @@ useEffect(() => {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const countryObj = Country.getCountryByCode(formData.location.country);
-    const countryName = countryObj?.name || "";
-    const stateName = formData.location.state;
+const countryObj = Country.getCountryByCode(formData.location.country);
+const countryName = countryObj?.name || formData.location.country;
+
+const stateObj = State.getStateByCodeAndCountry(formData.location.state, formData.location.country);
+const stateName = stateObj?.name || formData.location.state;
+
     const cityName = formData.location.city;
     const street = formData.streetAddress || "";
 
-    const fullAddress = `${street}, ${cityName}, ${stateName}, ${countryName}`;
+    // const fullAddress = `${street}, ${cityName}, ${stateName}, ${countryName}`;
 
-    const finalPayload = {
-      ...formData,
-      location: {
-        country: formData.location.country,
-        state: stateName,
-        district: cityName,
-        city: cityName,
-        location: street,
-        full: fullAddress,
-      },
-    };
+   const finalPayload = {
+  ...formData,
+  location: {
+    country: countryName,
+    state: stateName,
+    district: formData.location.city,
+    city: formData.location.city,
+    location: formData.streetAddress,
+    full: `${formData.streetAddress}, ${formData.location.city}, ${stateName}, ${countryName}`,
+  },
+};
+
 
     dispatch(updateUserProfile(finalPayload)).then(() => {
       dispatch(getCurrentUser({}));
@@ -197,18 +201,19 @@ useEffect(() => {
     onSubmit={handleSubmit}
     className="grid grid-cols-1 md:grid-cols-2 gap-5"
   >
-    {user.role === "Donor" && (
-      <div>
-        <label className="text-red-600 font-semibold mb-1 block">Name</label>
-        <input
-          type="text"
-          name="firstName"
-          className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
-          value={formData.name}
-          onChange={handleChange}
-        />
-      </div>
-    )}
+  {(user.role === "Donor" || user.role === "Admin") && (
+  <div>
+    <label className="text-red-600 font-semibold mb-1 block">Name</label>
+    <input
+      type="text"
+      name="name"
+      className="w-full border border-red-400 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-red-500"
+      value={formData.name}
+      onChange={handleChange}
+    />
+  </div>
+)}
+
 
     <div>
       <label className="text-red-600 font-semibold mb-1 block">Email</label>
