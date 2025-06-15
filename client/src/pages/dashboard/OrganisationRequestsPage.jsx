@@ -6,29 +6,40 @@ import moment from "moment";
 
 const OrganisationRequestsPage = () => {
   const [requests, setRequests] = useState([]);
+  const [selectedRequestId, setSelectedRequestId] = useState(null);
+const [rejectionReason, setRejectionReason] = useState("");
+const rejectionOptions = [
+  "Donor didn’t come",
+  "Unverified donor",
+  "Donor’s criteria didn't match",
+  "Invalid contact info",
+];
+
 
   const fetchRequests = async () => {
     try {
       const res = await API.get("/donations/incoming-requests");
       setRequests(res.data);
-      console.log(res.data)
+      console.log(res.data);
     } catch (error) {
       toast.error("Failed to load requests");
     }
   };
-  const handleStatusChange = async (id, status) => {
-    try {
-      const res = await API.put(`/donations/request/${id}/status`, { status });
-      toast.success(`Request ${status}`);
-
-      // ✅ Force a slight delay before fetching
-      setTimeout(() => {
-        fetchRequests();
-      }, 300);
-    } catch (error) {
-      toast.error("Failed to update status");
+  const handleStatusChange = async (id, status, reason = "") => {
+  try {
+    const payload = { status };
+    if (status === "rejected" && reason) {
+      payload.reason = reason;
     }
-  };
+
+    await API.put(`/donations/request/${id}/status`, payload);
+    toast.success(`Request marked as ${status}`);
+    setTimeout(() => fetchRequests(), 300);
+  } catch (error) {
+    toast.error("Failed to update status");
+  }
+};
+
 
   useEffect(() => {
     fetchRequests();
@@ -71,19 +82,79 @@ const OrganisationRequestsPage = () => {
                   {req.status === "pending" && (
                     <>
                       <button
-                        onClick={() => handleStatusChange(req._id, "approved")}
+                        onClick={() => handleStatusChange(req._id, "appointmentScheduled")}
+
                         className="bg-green-500 text-white px-2 py-1 rounded mr-2"
                       >
                         Approve
                       </button>
                       <button
-                        onClick={() => handleStatusChange(req._id, "rejected")}
+                        onClick={() => {
+                          const reason = prompt(
+                            "Enter rejection reason (e.g., donor didn’t come)"
+                          );
+                          if (reason)
+                            handleStatusChange(req._id, "rejected", reason);
+                        }}
                         className="bg-red-500 text-white px-2 py-1 rounded"
                       >
                         Reject
                       </button>
                     </>
                   )}
+
+                {req.status === "appointmentScheduled" && (
+  <>
+    <button
+      onClick={() => handleStatusChange(req._id, "fulfilled")}
+      className="bg-blue-500 text-white px-2 py-1 rounded mr-2"
+    >
+      Fulfill
+    </button>
+
+    {selectedRequestId === req._id ? (
+      <div className="flex flex-col gap-1">
+        <select
+          value={rejectionReason}
+          onChange={(e) => setRejectionReason(e.target.value)}
+          className="border rounded px-2 py-1 text-sm"
+        >
+          <option value="">Select Reason</option>
+          {rejectionOptions.map((reason, idx) => (
+            <option key={idx} value={reason}>
+              {reason}
+            </option>
+          ))}
+        </select>
+        <button
+          onClick={() => {
+            if (!rejectionReason) return toast.error("Please select a reason");
+            handleStatusChange(req._id, "rejected", rejectionReason);
+            setSelectedRequestId(null);
+            setRejectionReason("");
+          }}
+          className="bg-red-600 text-white text-xs px-2 py-1 rounded"
+        >
+          Confirm Reject
+        </button>
+        <button
+          onClick={() => setSelectedRequestId(null)}
+          className="text-xs text-gray-500"
+        >
+          Cancel
+        </button>
+      </div>
+    ) : (
+      <button
+        onClick={() => setSelectedRequestId(req._id)}
+        className="bg-red-500 text-white px-2 py-1 rounded"
+      >
+        Reject
+      </button>
+    )}
+  </>
+)}
+
                 </td>
               </tr>
             ))}

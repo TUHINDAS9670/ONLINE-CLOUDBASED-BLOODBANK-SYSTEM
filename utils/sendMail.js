@@ -61,39 +61,94 @@ const sendDonationConfirmationEmail = async (toEmail, donorName, quantity, blood
 
   await transporter.sendMail(mailOptions);
 };
-const sendDonationApprovalEmail = async (toEmail, donorName, bloodGroup, quantity, orgName) => {
+const sendDonationApprovalEmail = async (
+  toEmail,
+  donorName,
+  bloodGroup,
+  quantity,
+  orgName,
+  orgEmail,
+  orgPhone,
+  orgAddress
+) => {
   const mailOptions = {
     from: `"Blood Bank Service" <${process.env.MAIL_USER}>`,
     to: toEmail,
-    subject: 'Your Blood Donation Request has been Approved',
+    subject: 'Your Blood Donation Request Has Been Approved – Next Steps',
     html: `
       <p>Dear ${donorName},</p>
-      <p>Your blood donation request for <strong>${quantity}ml</strong> of <strong>${bloodGroup}</strong> has been approved by <strong>${orgName}</strong>.</p>
-      <p>Thank you for being a life saver!</p>
+      <p>We are pleased to inform you that your blood donation request for <strong>${quantity}ml</strong> of <strong>${bloodGroup}</strong> has been <strong>approved</strong> by <strong>${orgName}</strong>.</p>
+      
+      <p><strong>Next Steps:</strong></p>
+      <ul>
+        <li>Contact <strong>${orgName}</strong> to schedule your donation appointment.</li>
+        <li>Organisation Contact:</li>
+        <ul>
+          <li><strong>Email:</strong> ${orgEmail}</li>
+          <li><strong>Phone:</strong> ${orgPhone}</li>
+          <li><strong>Address:</strong> ${orgAddress}</li>
+        </ul>
+        <li>Bring a valid photo ID and any previous medical or blood donation documents (if available).</li>
+        <li>Ensure you are well-rested, hydrated, and have eaten before arriving.</li>
+      </ul>
+
+      <p>If you have any questions, feel free to reach out directly to the organisation using the contact info above.</p>
+
+      <p>Thank you for stepping up — your contribution can truly save lives.</p>
+
       <br>
-      <p>Regards,<br>Blood Bank Team</p>
+      <p>Warm regards,<br>Blood Bank Team</p>
     `
   };
 
   await transporter.sendMail(mailOptions);
 };
-const sendDonationRejectionEmail = async (toEmail, donorName, bloodGroup, quantity, orgName) => {
+
+const sendDonationRejectionEmail = async (
+  toEmail,
+  donorName,
+  bloodGroup,
+  quantity,
+  orgName,
+  orgEmail,
+  orgPhone,
+  orgAddress,
+  reason
+) => {
   const mailOptions = {
     from: `"Blood Bank Service" <${process.env.MAIL_USER}>`,
     to: toEmail,
-    subject: 'Your Blood Donation Request was Rejected',
+    subject: 'Update on Your Blood Donation Request',
     html: `
       <p>Dear ${donorName},</p>
-      <p>We regret to inform you that your donation request for <strong>${quantity}ml</strong> of <strong>${bloodGroup}</strong> has been rejected by <strong>${orgName}</strong>.</p>
-      <p>This could be due to availability, eligibility, or other operational reasons.</p>
-      <p>We deeply appreciate your willingness to help. Please feel free to try again later or reach out to other nearby organisations.</p>
+
+      <p>Thank you for your willingness to donate <strong>${quantity}ml</strong> of <strong>${bloodGroup}</strong>. Unfortunately, your donation request has been <strong>rejected</strong> by <strong>${orgName}</strong>.</p>
+
+      <p><strong>Reason for Rejection:</strong><br>${reason}</p>
+
+      <p>Please don’t be discouraged — your intention to help is incredibly valuable and appreciated. We encourage you to:</p>
+      <ul>
+        <li>Review your contact and health details to ensure accuracy.</li>
+        <li>Try again after a few days or apply to another nearby organisation.</li>
+        <li>Reach out to ${orgName} if you’d like further clarification.</li>
+      </ul>
+      <li>Organisation Contact:</li>
+        <ul>
+          <li><strong>Email:</strong> ${orgEmail}</li>
+          <li><strong>Phone:</strong> ${orgPhone}</li>
+          <li><strong>Address:</strong> ${orgAddress}</li>
+        </ul>
+
+      <p>Your willingness to support others in need is what keeps this mission alive.</p>
+
       <br>
-      <p>Regards,<br>Blood Bank Team</p>
+      <p>Warm regards,<br>Blood Bank Team</p>
     `
   };
 
   await transporter.sendMail(mailOptions);
 };
+
 const sendHospitalRequestEmail = async (toEmail, hospitalName, organisationName, quantity, bloodGroup, reason, orgLocation) => {
   const fullAddress = `
     ${orgLocation?.location}, ${orgLocation?.city}, ${orgLocation?.district},
@@ -159,12 +214,50 @@ const sendHospitalRequestStatusEmail = async (
   await transporter.sendMail(mailOptions);
 };
 
+const sendDonationSuccessEmail = async (
+  donorEmail,
+  donorName,
+  bloodGroup,
+  quantity,
+  organisationName
+) => {
+ 
+
+    const mailOptions = {
+      from: `"${organisationName}" <${process.env.SMTP_MAIL}>`,
+      to: donorEmail,
+      subject: "Thank You for Your Blood Donation!",
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.6">
+          <h2 style="color: #d32f2f;">Donation Completed Successfully</h2>
+          <p>Dear ${donorName},</p>
+          <p>We are happy to inform you that your recent blood donation request has been <strong>successfully fulfilled</strong>.</p>
+          <p><strong>Details:</strong></p>
+          <ul>
+            <li><strong>Blood Group:</strong> ${bloodGroup}</li>
+            <li><strong>Quantity:</strong> ${quantity} ml</li>
+            <li><strong>Organisation:</strong> ${organisationName}</li>
+          </ul>
+          <p>Thank you once again for your life-saving contribution. 💉</p>
+          <p>With gratitude,<br/>${organisationName} Team</p>
+        </div>
+      `,
+    };
+
+    await transporter.sendMail(mailOptions);
+
+};
+
+
+
+
 module.exports = {
   sendApprovalEmail,
   sendDonationConfirmationEmail,
   sendDonationApprovalEmail ,
   sendDonationRejectionEmail,
-  sendHospitalRequestEmail,sendHospitalRequestStatusEmail
+  sendHospitalRequestEmail,sendHospitalRequestStatusEmail,
+  sendDonationSuccessEmail
 };
 
 

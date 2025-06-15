@@ -23,23 +23,21 @@ const DonationRequestPage = () => {
   //     toast.error("Failed to load organisations");
   //   }
   // };
-const fetchOrganisations = async () => {
-  try {
-    const res = await API.post("/donations/filter-orgs", {
-      country: user.location.country,
-      state: user.location.state,
-    });
-    if (res.data.success) {
-         setOrganisations(res.data.orgData);
-       } else {
-         toast.error("Failed to load organisations");
-       }
-     } catch (error) {
-       toast.error("Failed to load organisations");
-     }
-};
-
-
+  const fetchOrganisations = async () => {
+    try {
+      const res = await API.post("/donations/filter-orgs", {
+        country: user.location.country,
+        state: user.location.state,
+      });
+      if (res.data.success) {
+        setOrganisations(res.data.orgData);
+      } else {
+        toast.error("Failed to load organisations");
+      }
+    } catch (error) {
+      toast.error("Failed to load organisations");
+    }
+  };
 
   const fetchRequests = async () => {
     try {
@@ -58,7 +56,12 @@ const fetchOrganisations = async () => {
         bloodGroup: user.bloodGroup,
       });
       toast.success("Request submitted");
-      setFormData({ bloodGroup: "", disease: "", organisationId: "", quantity: "" });
+      setFormData({
+        bloodGroup: "",
+        disease: "",
+        organisationId: "",
+        quantity: "",
+      });
       fetchRequests();
     } catch (error) {
       toast.error("Error sending request");
@@ -89,7 +92,8 @@ const fetchOrganisations = async () => {
   };
 
   const handleDelete = async (id) => {
-    if (!window.confirm("Are you sure you want to delete this request?")) return;
+    if (!window.confirm("Are you sure you want to delete this request?"))
+      return;
     try {
       await API.delete(`/donations/request/${id}`);
       fetchRequests();
@@ -103,27 +107,48 @@ const fetchOrganisations = async () => {
   return (
     <Layout>
       <div className="p-4 mt-20 animate-fade-in">
-        <h1 className="text-xl font-bold mb-4 text-red-600">Request Blood Donation</h1>
+        <h1 className="text-xl font-bold mb-4 text-red-600">
+          Request Blood Donation
+        </h1>
 
         <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded shadow border"
         >
-          <input type="text" value={user.name || ""} disabled className="border p-2 rounded" />
-          <input type="email" value={user.email || ""} disabled className="border p-2 rounded" />
-          <input type="text" value={user.bloodGroup} disabled className="border p-2 rounded" />
+          <input
+            type="text"
+            value={user.name || ""}
+            disabled
+            className="border p-2 rounded"
+          />
+          <input
+            type="email"
+            value={user.email || ""}
+            disabled
+            className="border p-2 rounded"
+          />
+          <input
+            type="text"
+            value={user.bloodGroup}
+            disabled
+            className="border p-2 rounded"
+          />
 
           <input
             type="text"
             placeholder="Disease (optional)"
             value={formData.disease}
-            onChange={(e) => setFormData({ ...formData, disease: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, disease: e.target.value })
+            }
             className="border p-2 rounded"
           />
 
           <select
             value={formData.organisationId}
-            onChange={(e) => setFormData({ ...formData, organisationId: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, organisationId: e.target.value })
+            }
             className="border p-2 rounded"
             required
           >
@@ -139,7 +164,9 @@ const fetchOrganisations = async () => {
             type="number"
             placeholder="Quantity (ml)"
             value={formData.quantity}
-            onChange={(e) => setFormData({ ...formData, quantity: e.target.value })}
+            onChange={(e) =>
+              setFormData({ ...formData, quantity: e.target.value })
+            }
             className="border p-2 rounded"
             required
           />
@@ -153,7 +180,9 @@ const fetchOrganisations = async () => {
         </form>
 
         <div className="mt-8 overflow-x-auto">
-          <h2 className="font-semibold mb-2 text-lg text-gray-800">Your Requests</h2>
+          <h2 className="font-semibold mb-2 text-lg text-gray-800">
+            Your Requests
+          </h2>
           <table className="min-w-full border text-sm table-auto shadow">
             <thead>
               <tr className="bg-gray-100 text-left text-xs">
@@ -173,14 +202,43 @@ const fetchOrganisations = async () => {
                 <tr key={req._id} className="hover:bg-gray-50 transition">
                   <td className="p-2 border">{req.bloodGroup}</td>
                   <td className="p-2 border">{req.quantity} ml</td>
-                  <td className="p-2 border">{req.organisation?.organisationName || "N/A"}</td>
-                  <td className="p-2 border">{req.organisation?.phoneNumber || "N/A"}</td>
-                  <td className="p-2 border">{req.organisation?.email || "N/A"}</td>
-                  <td className="p-2 border">{req.organisation?.location.full || "N/A"}</td>
-                  <td className="p-2 border">{req.disease || "N/A"}</td>
-                  <td className="p-2 border capitalize">{req.status}</td>
                   <td className="p-2 border">
-                    {req.status === "pending" && (
+                    {req.organisation?.organisationName || "N/A"}
+                  </td>
+                  <td className="p-2 border">
+                    {req.organisation?.phoneNumber || "N/A"}
+                  </td>
+                  <td className="p-2 border">
+                    {req.organisation?.email || "N/A"}
+                  </td>
+                  <td className="p-2 border">
+                    {req.organisation?.location.full || "N/A"}
+                  </td>
+                  <td className="p-2 border">{req.disease || "N/A"}</td>
+                  <td className="p-2 border capitalize">
+                    {req.status}
+                    {req.status === "rejected" && req.remarks ? (
+                      <div className="text-red-600 text-xs mt-1 italic">
+                        Reason: {req.remarks}
+                      </div>
+                    ) : null}
+                  </td>
+
+                  <td className="p-2 border">
+                    {req.status === "fulfilled" && (
+                      <div className="text-green-600 text-xs mt-1 italic">
+                        Donation completed
+                      </div>
+                    )}
+                    {req.status === "approved" && (
+                      <div className="text-orange-600 text-xs mt-1 italic">
+                        Donation Scheduled
+                      </div>
+                    )}
+
+                    {["pending"].includes(
+                      req.status
+                    ) && (
                       <div className="flex flex-wrap gap-2">
                         <button
                           className="bg-yellow-400 hover:bg-yellow-500 transition text-white px-2 py-1 rounded text-xs"

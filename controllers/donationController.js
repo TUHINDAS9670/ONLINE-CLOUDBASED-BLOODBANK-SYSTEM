@@ -159,7 +159,10 @@
 // };
 
 const DonationRequest = require("../models/DonationRequestModel");
-const { sendDonationRejectionEmail } = require("../utils/sendMail");
+const {
+  sendDonationRejectionEmail,
+  sendDonationSuccessEmail,
+} = require("../utils/sendMail");
 const { createInventoryController } = require("./inventoryController");
 
 // Donor submits donation request
@@ -195,8 +198,7 @@ const {
   sendDonationConfirmationEmail,
   sendDonationApprovalEmail,
 } = require("../utils/sendMail"); // ✅ correct import
-const userModel = require("../models/userModel");
-
+const User = require("../models/userModel");
 const createDonationRequest = async (req, res) => {
   try {
     const donorId = req.body.userId;
@@ -225,7 +227,10 @@ const createDonationRequest = async (req, res) => {
       donor.name,
       quantity,
       bloodGroup,
-      organisation.organisationName
+      organisation.organisationName,
+      organisation.email,
+      organisation.phoneNumber,
+      organisation.location.full
     );
 
     res.status(201).json({ message: "Donation request submitted", request });
@@ -278,12 +283,75 @@ const createDonationRequest = async (req, res) => {
 //   }
 // };
 
+// const updateDonationRequestStatus = async (req, res) => {
+//   try {
+//     const { id } = req.params;
+//     const { status } = req.body;
+
+//     if (!["approved", "rejected"].includes(status)) {
+//       return res.status(400).json({ message: "Invalid status" });
+//     }
+
+//     const request = await DonationRequest.findById(id).populate(
+//       "donor organisation"
+//     );
+//     if (!request) return res.status(404).json({ message: "Request not found" });
+
+//     request.status = status;
+//     await request.save();
+
+//     if (status === "approved") {
+//       // Add to inventory
+//       const inventoryReq = {
+//         body: {
+//           email: request.donor.email,
+//           userId: request.organisation._id.toString(),
+//           bloodGroup: request.bloodGroup,
+//           quantity: request.quantity,
+//           inventoryType: "in",
+//           disease: request.disease || "",
+//           organisation: request.organisation._id,
+//         },
+//       };
+
+//       await createInventoryController(inventoryReq, {
+//         status: () => ({ send: () => {} }),
+//       });
+
+//       await sendDonationApprovalEmail(
+//         request.donor.email,
+//         request.donor.name,
+//         request.bloodGroup,
+//         request.quantity,
+//         request.organisation.organisationName
+//       );
+//     }
+//     if (status === "rejected") {
+//       await sendDonationRejectionEmail(
+//         request.donor.email,
+//         request.donor.name,
+//         request.bloodGroup,
+//         request.quantity,
+//         request.organisation.organisationName
+//       );
+//     }
+
+//     res.status(200).json({ message: "Request updated", request });
+//   } catch (error) {
+//     console.error("Approval Error:", error);
+//     res.status(500).json({ message: "Server Error", error });
+//   }
+// };
 const updateDonationRequestStatus = async (req, res) => {
   try {
     const { id } = req.params;
-    const { status } = req.body;
+    const { status, reason } = req.body;
 
-    if (!["approved", "rejected"].includes(status)) {
+    if (
+      !["approved", "appointmentScheduled", "fulfilled", "rejected"].includes(
+        status
+      )
+    ) {
       return res.status(400).json({ message: "Invalid status" });
     }
 
@@ -293,10 +361,27 @@ const updateDonationRequestStatus = async (req, res) => {
     if (!request) return res.status(404).json({ message: "Request not found" });
 
     request.status = status;
+    if (status === "rejected" && reason) {
+      request.remarks = reason; // store rejection reason
+    }
+
     await request.save();
 
-    if (status === "approved") {
-      // Add to inventory
+    if (status === "appointmentScheduled") {
+      await sendDonationApprovalEmail(
+        request.donor.email,
+        request.donor.name,
+        request.bloodGroup,
+        request.quantity,
+        request.organisation.organisationName,
+        request.organisation.email,
+        request.organisation.phoneNumber,
+        request.organisation.location.full
+      );
+    }
+
+    if (status === "fulfilled") {
+      // Update inventory now
       const inventoryReq = {
         body: {
           email: request.donor.email,
@@ -313,7 +398,7 @@ const updateDonationRequestStatus = async (req, res) => {
         status: () => ({ send: () => {} }),
       });
 
-      await sendDonationApprovalEmail(
+      await sendDonationSuccessEmail(
         request.donor.email,
         request.donor.name,
         request.bloodGroup,
@@ -321,13 +406,18 @@ const updateDonationRequestStatus = async (req, res) => {
         request.organisation.organisationName
       );
     }
+
     if (status === "rejected") {
       await sendDonationRejectionEmail(
         request.donor.email,
         request.donor.name,
         request.bloodGroup,
         request.quantity,
-        request.organisation.organisationName
+        request.organisation.organisationName,
+        request.organisation.email,
+        request.organisation.phoneNumber,
+        request.organisation.location.full,
+        request.reason // Pass rejection reason
       );
     }
 
@@ -337,6 +427,7 @@ const updateDonationRequestStatus = async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 };
+
 // Donor views their donation request history
 const getDonorDonationRequests = async (req, res) => {
   try {
@@ -355,9 +446,13 @@ const getDonorDonationRequests = async (req, res) => {
 const getOrganisationDonationRequests = async (req, res) => {
   try {
     const orgId = req.body.userId;
+
     const requests = await DonationRequest.find({
       organisation: orgId,
-    }).populate("donor", "name email phoneNumber location");
+    })
+      .populate("donor", "name email phoneNumber location")
+      .sort({ createdAt: -1 });
+
     res.status(200).json(requests);
   } catch (error) {
     res.status(500).json({ message: "Server Error", error });
@@ -444,11 +539,10 @@ const getOrg = async (req, res) => {
   const { country, state } = req.body;
 
   try {
-    const filtered = await userModel.find({
+    const filtered = await User.find({
       role: "Organisation",
       "location.country": country,
       "location.state": state,
-      
     });
 
     res.status(200).send({ success: true, orgData: filtered });

@@ -12,9 +12,11 @@ const donationRequestSchema = new mongoose.Schema({
   disease: { type: String },
   status: {
     type: String,
-    enum: ["pending", "approved", "rejected"],
+    enum: ["pending", "approved", "fulfilled","appointmentScheduled", "rejected"],
     default: "pending",
   },
+  remarks: { type: String }, 
+  appointmentDate: { type: Date }, 
   date: { type: Date, default: Date.now },
 });
 
