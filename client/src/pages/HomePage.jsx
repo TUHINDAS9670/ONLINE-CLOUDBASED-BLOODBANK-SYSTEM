@@ -184,7 +184,7 @@ import { MdBloodtype } from "react-icons/md";
 import second from "../assets/Hero-Content-Images/second.jpg";
 import third from "../assets/Hero-Content-Images/third.jpg";
 import registration from "../assets/Hero-Content-Images/registration.jpg";
-import healthScreening from "../assets/Hero-Content-Images/healthscreening.jpg";
+import healthScreening from "../assets/Hero-Content-Images/healthScreening.jpg";
 import donation from "../assets/Hero-Content-Images/donation.jpg";
 import impact from "../assets/Hero-Content-Images/impact.png";
 import EmergencyRequestModal from "../components/shared/modal/EmergencyRequestModal";
