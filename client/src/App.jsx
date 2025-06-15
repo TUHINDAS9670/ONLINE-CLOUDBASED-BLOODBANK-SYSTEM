@@ -2,7 +2,7 @@ import { Routes, Route } from "react-router-dom";
 import { Login } from "./pages/auth/Login";
 import Register from "./pages/auth/Register";
 import { ToastContainer } from "react-toastify";
-import ProtectedRoute from "./components/Routes/protectedRoute";
+import ProtectedRoute from "./components/Routes/ProtectedRoute";
 import PublicRoute from "./components/Routes/PublicRoute";
 import Donor from "./pages/dashboard/Donor";
 import Hospital from "./pages/dashboard/Hospital";
@@ -27,7 +27,6 @@ import OrganisationHospitalRequestsPage from "./pages/dashboard/OrganisationHosp
 import PublicInventoryDashboard from "./pages/NoUser/PublicInventoryDashboard";
 import CreateAdminPage from "./pages/admin/CreateAdminPage";
 import MyProfile from "./pages/dashboard/MyProfile";
-import EmergencyRequestStatusView from "./pages/admin/EmergencyRequestStatusView ";
 import AdminEmergencyRequests from "./pages/admin/AdminEmergencyRequests";
 import OrganisationEmergencyRequests from "./pages/dashboard/OrganisationEmergencyRequests";
 import OrganisationEmergencyRequestHistory from "./pages/dashboard/OrganisationEmergencyRequestHistory";
