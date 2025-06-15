@@ -49,7 +49,7 @@ if (!fs.existsSync(uploadsDir)) {
   console.log("Created folder:", uploadsDir);
 }
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(express.static(path.join(__dirname,'./client/dist')))
+// app.use(express.static(path.join(__dirname,'./client/dist')))
 app.get("/view-document/:filename", (req, res) => {
   const filePath = path.join(__dirname, "uploads", "documents", req.params.filename);
   const ext = path.extname(filePath).toLowerCase();
@@ -68,9 +68,9 @@ app.get("/view-document/:filename", (req, res) => {
 });
 
 // STATIC ROUTeS
-app.get('*',function(req,res){
-  res.sendFile(path.join(__dirname,"./client/dist/index.html" ))
-})
+// app.get('*',function(req,res){
+//   res.sendFile(path.join(__dirname,"./client/dist/index.html" ))
+// })
 
 app.listen(PORT, () => {
   console.log(`server running in ${process.env.DEV_MODE} mode on port ${PORT} successfuly`.bgWhite.green);
