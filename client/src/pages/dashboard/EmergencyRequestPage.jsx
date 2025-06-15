@@ -7,40 +7,41 @@ import { Link } from "react-router-dom";
 
 const EmergencyRequestForm = () => {
   const [patientId, setPatientId] = useState(null);
+const [formData, setFormData] = useState({
+  fullName: "",
+  email: "",
+  phone: "",
+  bloodGroup: "",
+  urgency: "",
+  quantity: "",
+  country: "IN", // country name, not ISO
+  state: "",
+  city: "",
+  manualAddress: "",
+  document: null,
+});
 
-  const [formData, setFormData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    bloodGroup: "",
-    urgency: "",
-    quantity: "",
-    country: "IN",
-    state: "",
-    city: "",
-    manualAddress: "", // ✅ add this
+const [selectedCountryIso, setSelectedCountryIso] = useState("IN");
+const [selectedStateIso, setSelectedStateIso] = useState("");
+const [states, setStates] = useState([]);
+const [cities, setCities] = useState([]);
 
-    document: null,
-  });
 
-  const [states, setStates] = useState([]);
-  const [cities, setCities] = useState([]);
 
   useEffect(() => {
     const selectedStates = State.getStatesOfCountry(formData.country);
     setStates(selectedStates);
     setFormData((prev) => ({ ...prev, state: "", city: "" }));
   }, [formData.country]);
+useEffect(() => {
+  const allStates = State.getStatesOfCountry(selectedCountryIso);
+  setStates(allStates);
+  setCities([]);
+  setFormData((prev) => ({ ...prev, state: "", city: "" }));
+}, [selectedCountryIso]);
 
-  useEffect(() => {
-    if (formData.state) {
-      const selectedCities = City.getCitiesOfState(
-        formData.country,
-        formData.state
-      );
-      setCities(selectedCities);
-    }
-  }, [formData.state]);
+
+ 
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
@@ -49,6 +50,17 @@ const EmergencyRequestForm = () => {
       [name]: files ? files[0] : value,
     }));
   };
+useEffect(() => {
+  if (selectedStateIso) {
+    const cityList = City.getCitiesOfState(selectedCountryIso, selectedStateIso);
+    setCities(cityList);
+    const selected = states.find((s) => s.isoCode === selectedStateIso);
+    if (selected) {
+      setFormData((prev) => ({ ...prev, state: selected.name }));
+    }
+  }
+}, [selectedStateIso, selectedCountryIso, states]);
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -67,7 +79,7 @@ const EmergencyRequestForm = () => {
         country: formData.country,
         state: formData.state,
         city: formData.city,
-        manualAddress: formData.manualAddress, // ✅ include here
+        manualAddress: formData.manualAddress,
       })
     );
 
@@ -92,7 +104,7 @@ const EmergencyRequestForm = () => {
 
       if (res.data.success) {
         toast.success(`Request submitted! Your ID: ${res.data.patientId}`);
-        setPatientId(res.data.patientId); // ⬅️ store patient ID
+        setPatientId(res.data.patientId);
 
         setFormData({
           fullName: "",
@@ -108,12 +120,10 @@ const EmergencyRequestForm = () => {
         });
         // reset
       }
-    } 
-  
-catch (err) {
+    } catch (err) {
       const msg = err?.response?.data?.message || "Failed to submit";
-  toast.error(msg);
-  console.error("Emergency request error:", msg);
+      toast.error(msg);
+      console.error("Emergency request error:", msg);
     }
   };
 
@@ -222,59 +232,79 @@ catch (err) {
           </div>
 
           {/* Country */}
+   
+
           <div>
-            <label className="text-red-600 font-semibold">Country</label>
-            <select
-              name="country"
-              value={formData.country}
-              onChange={handleChange}
-              className="w-full border border-black px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-            >
-              {Country.getAllCountries().map((c) => (
-                <option key={c.isoCode} value={c.isoCode}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+  <label className="text-red-600 font-semibold">Country</label>
+  <select
+    name="country"
+    value={selectedCountryIso}
+   onChange={(e) => {
+  const iso = e.target.value;
+  const selected = Country.getAllCountries().find((c) => c.isoCode === iso);
+  setSelectedCountryIso(iso);
+  setFormData((prev) => ({
+    ...prev,
+    country: selected?.name || "", // ✅ store full country name
+    state: "",
+    city: "",
+  }));
+}}
+
+    className="w-full border border-black px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+  >
+    <option value="">Select</option>
+    {Country.getAllCountries().map((c) => (
+      <option key={c.isoCode} value={c.isoCode}>
+        {c.name}
+      </option>
+    ))}
+  </select>
+</div>
+
 
           {/* State */}
-          <div>
-            <label className="text-red-600 font-semibold">State</label>
-            <select
-              name="state"
-              value={formData.state}
-              onChange={handleChange}
-              className="w-full border border-black px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-              required
-            >
-              <option value="">Select</option>
-              {states.map((s) => (
-                <option key={s.isoCode} value={s.isoCode}>
-                  {s.name}
-                </option>
-              ))}
-            </select>
-          </div>
+         <div>
+  <label className="text-red-600 font-semibold">State</label>
+  <select
+    name="state"
+    value={selectedStateIso}
+    onChange={(e) => setSelectedStateIso(e.target.value)}
+    className="w-full border border-black px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+    required
+  >
+    <option value="">Select</option>
+    {states.map((s) => (
+      <option key={s.isoCode} value={s.isoCode}>
+        {s.name}
+      </option>
+    ))}
+  </select>
+</div>
+
 
           {/* City */}
-          <div>
-            <label className="text-red-600 font-semibold">City</label>
-            <select
-              name="city"
-              value={formData.city}
-              onChange={handleChange}
-              className="w-full border border-black px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
-              required
-            >
-              <option value="">Select</option>
-              {cities.map((c) => (
-                <option key={c.name} value={c.name}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
+  <div>
+  <label className="text-red-600 font-semibold">City</label>
+  <select
+    name="city"
+    value={formData.city}
+    onChange={(e) =>
+      setFormData((prev) => ({ ...prev, city: e.target.value }))
+    }
+    className="w-full border border-black px-4 py-2 rounded focus:outline-none focus:ring-2 focus:ring-red-500"
+    required
+  >
+    <option value="">Select</option>
+    {cities.map((c) => (
+      <option key={c.name} value={c.name}>
+        {c.name}
+      </option>
+    ))}
+  </select>
+</div>
+
+
 
           {/* Manual Address */}
           <div className="md:col-span-2">

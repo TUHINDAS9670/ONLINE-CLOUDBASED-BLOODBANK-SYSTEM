@@ -58,6 +58,30 @@ const HospitalBloodRequestPage = () => {
  const [cities, setCities] = useState([]);
 const [selectedCity, setSelectedCity] = useState("");
 
+// useEffect(() => {
+//   if (user && user.location) {
+//     const { country, state } = user.location;
+
+//     const allStates = State.getStatesOfCountry(country || "IN");
+//     const matched = allStates.find(
+//       (s) =>
+//         s.name.toLowerCase() === state?.toLowerCase() ||
+//         s.isoCode.toLowerCase() === state?.toLowerCase()
+//     );
+
+//     const stateVariants = [];
+//     if (matched) {
+//       stateVariants.push(matched.name);
+//       const allCities = City.getCitiesOfState(country, matched.isoCode);
+//       setCities(allCities);
+//     } else if (state) {
+//       stateVariants.push(state);
+//     }
+
+//     fetchOrganisations({ country, stateVariants });
+//     fetchRequests();
+//   }
+// }, [user]);
 useEffect(() => {
   if (user && user.location) {
     const { country, state } = user.location;

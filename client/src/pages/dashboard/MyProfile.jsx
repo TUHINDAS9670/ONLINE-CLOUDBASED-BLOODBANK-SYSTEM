@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   updateUserProfile,
   getCurrentUser,
-  changePassword, // ✅ <-- Add this
+  changePassword, 
 } from "../../redux/features/auth/authAction";
 
 import { Country, State, City } from "country-state-city";
@@ -108,20 +108,25 @@ useEffect(() => {
 }, [user]);
 
 
-  const handleChange = (e) => {
-    const { name, value } = e.target;
-    if (["country", "state", "city"].includes(name)) {
-      setFormData((prev) => ({
-        ...prev,
-        location: {
-          ...prev.location,
-          [name]: value,
-        },
-      }));
-    } else {
-      setFormData({ ...formData, [name]: value });
-    }
-  };
+const handleChange = (e) => {
+  const { name, value } = e.target;
+  if (["country", "state", "city"].includes(name)) {
+    //  This stores ISO for country — needs to be full name
+    setFormData((prev) => ({
+      ...prev,
+      location: {
+        ...prev.location,
+        [name]:
+          name === "country"
+            ? Country.getCountryByCode(value)?.name || value
+            : value,
+      },
+    }));
+  } else {
+    setFormData({ ...formData, [name]: value });
+  }
+};
+
 
   const handlePasswordChangeInput = (e) => {
     const { name, value } = e.target;
