@@ -62,26 +62,35 @@ useEffect(() => {
   if (user && user.location) {
     const { country, state } = user.location;
 
-    const allStates = State.getStatesOfCountry(country || "IN");
-    const matched = allStates.find(
-      (s) =>
-        s.name.toLowerCase() === state?.toLowerCase() ||
-        s.isoCode.toLowerCase() === state?.toLowerCase()
+    const matchedCountry = Country.getAllCountries().find(
+      (c) => c.name.toLowerCase() === (country || "India").toLowerCase()
     );
 
-    const stateVariants = [];
-    if (matched) {
-      stateVariants.push(matched.name);
-      const allCities = City.getCitiesOfState(country, matched.isoCode);
-      setCities(allCities);
-    } else if (state) {
-      stateVariants.push(state);
+    if (!matchedCountry) return;
+
+    const allStates = State.getStatesOfCountry(matchedCountry.isoCode);
+    const matchedState = allStates.find(
+      (s) => s.name.toLowerCase() === state?.toLowerCase()
+    );
+
+    if (matchedState) {
+      const cityList = City.getCitiesOfState(
+        matchedCountry.isoCode,
+        matchedState.isoCode
+      );
+      setCities(cityList);
     }
 
-    fetchOrganisations({ country, stateVariants });
+    const stateVariants = matchedState ? [matchedState.name] : [state];
+    fetchOrganisations({
+      country: matchedCountry.name,
+      stateVariants,
+    });
+
     fetchRequests();
   }
 }, [user]);
+
 
   const fetchOrganisations = async (locationData) => {
     try {
