@@ -248,6 +248,97 @@ const sendDonationSuccessEmail = async (
 
 };
 
+const sendEmergencyRequestCreatedEmail = async (
+  toEmail,
+  name,
+  bloodGroup,
+  quantity,
+  urgency,
+  address
+) => {
+  const fullAddress = `
+    ${address.manualAddress || ""}, ${address.city}, ${address.state}, ${address.country}
+  `.replace(/undefined|null/g, "").replace(/\s+,/g, "");
+
+  const mailOptions = {
+    from: `"Blood Bank Service" <${process.env.MAIL_USER}>`,
+    to: toEmail,
+    subject: "Emergency Blood Request Submitted",
+    html: `
+      <p>Dear ${name},</p>
+      <p>Your emergency blood request has been submitted successfully.</p>
+      <p><strong>Request Details:</strong></p>
+      <ul>
+        <li><strong>Blood Group:</strong> ${bloodGroup}</li>
+        <li><strong>Quantity:</strong> ${quantity} ml</li>
+        <li><strong>Urgency:</strong> ${urgency}</li>
+        <li><strong>Address:</strong> ${fullAddress}</li>
+      </ul>
+      <p>Our team will review your request shortly. Keep your Patient ID safe for tracking.</p>
+      <br>
+      <p>Regards,<br>Blood Bank Team</p>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+const sendAdminApprovalEmail = async (toEmail, name, bloodGroup, quantity) => {
+  const mailOptions = {
+    from: `"Blood Bank Service" <${process.env.MAIL_USER}>`,
+    to: toEmail,
+    subject: `Your Emergency Blood Request Has Been Approved`,
+    html: `
+      <p>Dear ${name},</p>
+
+      <p>We are pleased to inform you that your emergency blood request has been <strong>approved</strong> by our admin team.</p>
+
+      <ul>
+        <li><strong>Blood Group:</strong> ${bloodGroup}</li>
+        <li><strong>Quantity:</strong> ${quantity} ml</li>
+      </ul>
+
+      <p><strong>What happens next?</strong></p>
+      <ul>
+        <li>Your request will now be forwarded to nearby blood banks and organisations based on your location.</li>
+        <li>You will be notified once a blood bank accepts your request.</li>
+        <li>The accepting organisation will contact you directly through your registered details.</li>
+      </ul>
+
+      <p>We are working to ensure you receive assistance as soon as possible.</p>
+
+      <br>
+      <p>Regards,<br><strong>Blood Bank Team</strong></p>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+const sendAdminRejectionEmail = async (toEmail, name, bloodGroup, quantity) => {
+  const mailOptions = {
+    from: `"Blood Bank Service" <${process.env.MAIL_USER}>`,
+    to: toEmail,
+    subject: `Your Emergency Blood Request Has Been Rejected`,
+    html: `
+      <p>Dear ${name},</p>
+
+      <p>We regret to inform you that your emergency blood request has been <strong>rejected</strong> by our admin team after review.</p>
+
+      <ul>
+        <li><strong>Blood Group:</strong> ${bloodGroup}</li>
+        <li><strong>Quantity:</strong> ${quantity} ml</li>
+      </ul>
+
+      <p>If you believe this was a mistake or require urgent assistance, please contact our support team or try submitting a new request after 72 hours.</p>
+
+      <p>We appreciate your understanding.</p>
+
+      <br>
+      <p>Regards,<br><strong>Blood Bank Team</strong></p>
+    `,
+  };
+
+  await transporter.sendMail(mailOptions);
+};
 
 
 
@@ -257,7 +348,7 @@ module.exports = {
   sendDonationApprovalEmail ,
   sendDonationRejectionEmail,
   sendHospitalRequestEmail,sendHospitalRequestStatusEmail,
-  sendDonationSuccessEmail
+  sendDonationSuccessEmail,sendEmergencyRequestCreatedEmail,sendAdminRejectionEmail,sendAdminApprovalEmail
 };
 
 

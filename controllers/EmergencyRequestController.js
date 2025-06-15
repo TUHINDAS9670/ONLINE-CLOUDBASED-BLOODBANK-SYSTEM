@@ -4,7 +4,7 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const EmergencyRequest = require("../models/EmergencyRequestModel");
 const User = require("../models/userModel");
-const { sendApprovalEmail } = require("../utils/sendMail");
+const { sendApprovalEmail, sendEmergencyRequestCreatedEmail, sendAdminDecisionEmail, sendAdminRejectionEmail, sendAdminApprovalEmail } = require("../utils/sendMail");
 
 
 const submitEmergencyRequest = async (req, res) => {
@@ -68,6 +68,7 @@ const submitEmergencyRequest = async (req, res) => {
 
     await newRequest.save();
 
+
     res
       .status(200)
       .json({
@@ -75,6 +76,8 @@ const submitEmergencyRequest = async (req, res) => {
         message: "Emergency request submitted.",
         patientId,
       });
+      await sendEmergencyRequestCreatedEmail(email, fullName, bloodGroup, quantity, urgency, address);
+
   } catch (err) {
     console.error("Emergency request error:", err);
     res
@@ -145,6 +148,27 @@ const updateEmergencyRequestStatusByAdmin = async (req, res) => {
     res
       .status(200)
       .send({ success: true, message: "Admin status updated", data: request });
+{status == "admin_approved" &&
+  await sendAdminApprovalEmail(
+  request.email,
+  request.fullName,
+  request.bloodGroup,
+  request.quantity,
+  status,
+  adminRemarks
+);
+}
+{status == "rejected_by_admin" &&
+  await sendAdminRejectionEmail(
+  request.email,
+  request.fullName,
+  request.bloodGroup,
+  request.quantity,
+  status,
+  adminRemarks
+);
+}
+
   } catch (error) {
     console.error(error);
     res.status(500).send({ success: false, message: "Server error" });
@@ -489,5 +513,5 @@ module.exports = {
   getAdminPendingRequests,
   getOrgEmergencyRequestsController,
   getRequestByPatientId,
-  getOrganisationHandledRequests
+  getOrganisationHandledRequests,
 };
