@@ -31,6 +31,7 @@ import AdminEmergencyRequests from "./pages/admin/AdminEmergencyRequests";
 import OrganisationEmergencyRequests from "./pages/dashboard/OrganisationEmergencyRequests";
 import OrganisationEmergencyRequestHistory from "./pages/dashboard/OrganisationEmergencyRequestHistory";
 import DonorEmergencyRequestPage from "./pages/dashboard/DonorEmergencyRequestPage";
+import AdminList from "./pages/admin/AdminList";
 
 function App() {
   return (
@@ -115,6 +116,14 @@ function App() {
             element={
               <ProtectedRoute>
                 <OrganisationList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/admin-list"
+            element={
+              <ProtectedRoute>
+                <AdminList />
               </ProtectedRoute>
             }
           />

@@ -194,6 +194,19 @@ const Sidebar = () => {
                   Organization List
                 </Link>
               </div>
+              <div
+                className={`p-4 border my-1 lg:flex gap-3 text-lg pl-11 ${
+                  location.pathname === "/admin-list"
+                    ? "bg-red-500 text-white"
+                    : "bg-gray-200 text-black"
+                }`}
+              >
+                <FaBuildingNgo className="lg:w-[80px] lg:h-[30px]"/>
+
+                <Link to="/admin-list" className="font-bold ml-[-22px]">
+                  Admin List
+                </Link>
+              </div>
             </>
           )}
           {(user?.role === "Donor" || user?.role === "Hospital") && (
