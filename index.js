@@ -73,6 +73,6 @@ app.get("/view-document/:filename", (req, res) => {
 // })
 
 app.listen(PORT, () => {
-  console.log(`server running in ${process.env.DEV_MODE} mode on port ${process.env.PORT} successfuly`.bgWhite.green);
+  console.log(`server running in ${process.env.DEV_MODE} mode on port ${PORT} successfuly`.bgWhite.green);
 }); 
 
