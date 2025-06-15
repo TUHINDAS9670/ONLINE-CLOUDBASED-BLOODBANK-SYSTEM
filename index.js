@@ -67,7 +67,7 @@ app.get("/view-document/:filename", (req, res) => {
   res.sendFile(filePath);
 });
 
-//STATIC ROUTeS
+// STATIC ROUTeS
 // app.get('*',function(req,res){
 //   res.sendFile(path.join(__dirname,"./client/dist/index.html" ))
 // })
