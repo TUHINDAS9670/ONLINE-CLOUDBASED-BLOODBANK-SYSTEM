@@ -65,6 +65,51 @@ const getOrgListController = async (req, res) => {
     });
   }
 };
+// const getAdminListController = async (req, res) => {
+//   try {
+//     const AdminData = await userModel
+//       .find({ role: "Admin" })
+//       .sort({ createdAt: -1 });
+
+//     return res.status(200).send({
+//       success: true,
+//       Toatlcount: AdminData.length,
+//       message: "Admin List Fetched Successfully",
+//       AdminData,
+//     });
+//   } catch (error) {
+//     console.log(error);
+//     return res.status(500).send({
+//       success: false,
+//       message: "Error In Admin List API",
+//       error,
+//     });
+//   }
+// };
+const Admin = require("../models/userModel"); // adjust path if needed
+
+const getAdminListController = async (req, res) => {
+  try {
+    const currentAdminId = req.body.userId;
+
+    const admins = await Admin.find({ _id: { $ne: currentAdminId },role: "Admin"});
+
+    res.status(200).json({
+      success: true,
+      admins,
+    });
+  } catch (error) {
+    console.error("Error fetching admin list:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch admin list",
+    });
+  }
+};
+
+
+
+
 // =======================================
 
 //DELETE DONAR
@@ -88,4 +133,4 @@ const deleteDonorController = async (req, res) => {
  
 
 //export
-module.exports={getDonorListController,getHospitalListController,getOrgListController,deleteDonorController}
+module.exports={getDonorListController,getHospitalListController,getOrgListController,deleteDonorController,getAdminListController}
