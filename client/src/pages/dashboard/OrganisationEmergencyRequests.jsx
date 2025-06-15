@@ -50,28 +50,34 @@ const convertAddressCodesToNames = (request) => {
       }
     };
   };
-  
-  const fetchRequests = async () => {
+  const getStateIsoFromName = (stateName, countryCode = "IN") => {
+  const states = State.getStatesOfCountry(countryCode);
+  const matched = states.find((s) => s.name.toLowerCase() === stateName.toLowerCase());
+  return matched?.isoCode;
+};
+
+ const fetchRequests = async () => {
   try {
     const res = await API.post("/emergency/organisation/view-requests", {});
     const transformedRequests = res.data.requests.map(convertAddressCodesToNames);
     setRequests(transformedRequests);
 
-    // Fetch organisation user details
-    // const userRes = await API.get("/auth/get-current-user");
-    // const user = userRes.data?.user;
-    console.log(user)
+    let countryCode = user?.location?.country === "India" ? "IN" : user?.location?.country;
+    const stateName = user?.location?.state;
 
-    const orgStateCode = user?.location?.state;
-    if (orgStateCode) {
-      const cities = City.getCitiesOfState("IN", orgStateCode);
+    const stateIso = getStateIsoFromName(stateName, countryCode);
+    if (stateIso) {
+      const cities = City.getCitiesOfState(countryCode, stateIso);
       setCityOptions(cities.map((c) => c.name));
     }
 
   } catch (err) {
+    console.error("Error fetching emergency requests:", err);
     toast.error("Failed to load requests");
   }
 };
+
+
 
   useEffect(() => {
     fetchRequests();
