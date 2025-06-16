@@ -42,7 +42,7 @@ const sendApprovalEmail = async (toEmail, patientName, patientId, orgDetails) =>
 
   await transporter.sendMail(mailOptions);
 };
-const sendRejectionEmail = async (toEmail, patientName, patientId, rejectionReason, orgDetails) => {
+const sendRejectionEmail = async (toEmail, patientName, patientId, orgDetails) => {
   const { name, contact, email, address } = orgDetails;
 
   const orgFullAddress = `
@@ -65,8 +65,6 @@ const sendRejectionEmail = async (toEmail, patientName, patientId, rejectionReas
         <li><strong>Email:</strong> ${email}</li>
         <li><strong>Address:</strong> ${orgFullAddress}</li>
       </ul>
-
-      <p><strong>Reason for Rejection:</strong> ${rejectionReason}</p>
 
       <p>If you believe this was a mistake or need further help, please contact the organisation directly or consider submitting another request after 72 hours.</p>
 
