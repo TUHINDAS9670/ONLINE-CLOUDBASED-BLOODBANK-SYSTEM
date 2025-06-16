@@ -66,6 +66,7 @@ const HomePageUserBased = () => {
                 <thead className="bg-gray-100">
                   <tr>
                     <th className="px-4 py-2 border-b text-left">Identity</th>
+                    <th className="px-4 py-2 border-b text-left">Name</th>
                     <th className="px-4 py-2 border-b text-left">
                       Blood Group
                     </th>
@@ -85,9 +86,23 @@ const HomePageUserBased = () => {
                       <td>
                         {record.inventoryType === "in"
                           ? "Donor"
-                          : record.requesterType || "Hospital"}{" "}
+                          : record.requesterType || "Hospital"
+                          }{" "}
                         {/* Use the requesterType field */}
-                      </td>
+                        </td>
+                        {/* <td>
+  {record.inventoryType === "in"
+    ? "Donor"
+    : record.requesterType === "Hospital"
+    ? "Hospital"
+    : "Patient"}
+</td> */}
+
+                      <td>
+  {record.inventoryType === "in"
+    ? record.donor?.name || "Unknown Donor"
+    : record.hospital?.hospitalName || "Unknown Hospital"}
+</td>
 
                       <td className="px-4 py-2 border-b">
                         {record.bloodGroup}

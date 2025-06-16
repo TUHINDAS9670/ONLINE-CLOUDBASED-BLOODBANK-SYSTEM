@@ -360,8 +360,9 @@ const getOrgEmergencyRequestsController = async (req, res) => {
 
     const stateCode = user.location?.state;
     const countryCode = user.location?.country;
+    const cityCode = user.location?.city;
 
-    if (!stateCode || !countryCode) {
+    if (!stateCode || !countryCode ||!cityCode) {
       return res
         .status(400)
         .json({
@@ -374,7 +375,8 @@ const getOrgEmergencyRequestsController = async (req, res) => {
       status: "admin_approved",
       $or: [
         { "address.state": stateCode },
-        { "address.country": countryCode }
+        { "address.country": countryCode },
+        { "address.city": cityCode }
       ],
     }).sort({ createdAt: -1 });
 
@@ -463,7 +465,7 @@ await updatedRequest.save();
 };
 const getOrganisationHandledRequests = async (req, res) => {
   try {
-    const userId = req.params.userId;
+const userId = req.params.userId; 
 
     const user = await User.findById(userId).lean();
     if (!user || user.role !== "Organisation") {

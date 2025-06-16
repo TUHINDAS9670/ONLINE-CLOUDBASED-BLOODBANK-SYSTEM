@@ -61,6 +61,7 @@ const convertAddressCodesToNames = (request) => {
     const res = await API.post("/emergency/organisation/view-requests", {});
     const transformedRequests = res.data.requests.map(convertAddressCodesToNames);
     setRequests(transformedRequests);
+    console.log(requests)
 
     let countryCode = user?.location?.country === "India" ? "IN" : user?.location?.country;
     const stateName = user?.location?.state;

@@ -8,13 +8,15 @@ const OrganisationEmergencyRequestHistory = () => {
   const [requests, setRequests] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  const { user: orgUser } = useSelector((state) => state.auth);
+  const { user } = useSelector((state) => state.auth);
+  console.log(user);
+  
 // Adjust based on your auth setup
 
   useEffect(() => {
     const fetchRequests = async () => {
   try {
-    const res = await API.get(`/api/emergency-request/handled-by-org/${orgUser._id}`, {
+    const res = await API.get(`/emergency-request/handled-by-org/${user._id}`, {
       headers: {
         Authorization: `Bearer ${localStorage.getItem("token")}`,
       },
@@ -38,8 +40,8 @@ const OrganisationEmergencyRequestHistory = () => {
 };
 
 
-    if (orgUser) fetchRequests();
-  }, [orgUser]);
+    if (user) fetchRequests();
+  }, [user]);
 
   if (loading) return <p className="text-center mt-8">Loading...</p>;
 
