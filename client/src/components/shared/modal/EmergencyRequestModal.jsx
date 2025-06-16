@@ -156,13 +156,14 @@ const res = await API.get(`/emergency/get-by-patient-id/${requestId.trim()}`);
   </ul>
 
   <a
-    href={`http://localhost:3000/view-document/${request.documentUrl?.split("/").pop()}`}
-    target="_blank"
-    rel="noopener noreferrer"
-    className="inline-block mt-3 text-blue-600 underline"
-  >
-    📄 View Hospital Document
-  </a>
+  href={request.documentUrl}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-block mt-3 text-blue-600 underline"
+>
+  📄 View Hospital Document
+</a>
+
 
   {/* Visual timeline (fake progress UI) */}
   <div className="mt-5">

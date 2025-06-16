@@ -68,10 +68,7 @@ const AdminEmergencyRequests = () => {
                 </p>
 
                 <a
-                  href={`http://localhost:3000/${req.documentUrl.replace(
-                    /\\/g,
-                    "/"
-                  )}`}
+                href={req.documentUrl}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 underline"

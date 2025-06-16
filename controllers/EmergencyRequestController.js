@@ -9,39 +9,36 @@ const { sendApprovalEmail, sendEmergencyRequestCreatedEmail, sendAdminDecisionEm
 
 const submitEmergencyRequest = async (req, res) => {
   try {
-    const { fullName, email, phone, bloodGroup, urgency, quantity } = req.body;
+    const { fullName, email, phone, bloodGroup, urgency, quantity, documentUrl } = req.body;
 
-    const address = JSON.parse(req.body.address);
+    const address = JSON.parse(req.body.address || "{}");
 
     if (!address || !address.country || !address.state || !address.city) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Incomplete address details." });
+      return res.status(400).json({
+        success: false,
+        message: "Incomplete address details.",
+      });
     }
 
-    if (!req.file) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Document is required." });
+    if (!documentUrl) {
+      return res.status(400).json({
+        success: false,
+        message: "Document URL is required.",
+      });
     }
 
     const patientId = uuidv4();
-    const ext = path.extname(req.file.originalname); // .pdf, .jpg, etc.
-    const fileName = `${uuidv4()}${ext}`;
-    const destPath = path.join("uploads", "documents", fileName);
 
-    // Rename/move file from temp location to final destination
-    fs.renameSync(req.file.path, destPath);
-    // Assuming you're using Mongoose and have imported your model
+    // 48-hour rate limit logic
     const lastRequest = await EmergencyRequest.findOne({
-      email: req.body.email,
-      phone: req.body.phone,
+      email,
+      phone,
     }).sort({ requestTimestamp: -1 });
 
     if (lastRequest) {
       const now = new Date();
       const lastTime = new Date(lastRequest.requestTimestamp);
-      const hoursSince = (now - lastTime) / (1000 * 60 * 60); // convert ms to hours
+      const hoursSince = (now - lastTime) / (1000 * 60 * 60);
 
       if (hoursSince < 48) {
         return res.status(400).json({
@@ -62,22 +59,27 @@ const submitEmergencyRequest = async (req, res) => {
       urgency,
       quantity,
       address,
-      documentUrl: destPath.replace(/\\/g, "/"), // Store as forward slashes for URL compatibility
+      documentUrl, // Now directly coming from frontend (Cloudinary)
       createdAt: new Date(),
     });
 
     await newRequest.save();
 
+    // Respond first, then send email
+    res.status(200).json({
+      success: true,
+      message: "Emergency request submitted.",
+      patientId,
+    });
 
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Emergency request submitted.",
-        patientId,
-      });
-      await sendEmergencyRequestCreatedEmail(email, fullName, bloodGroup, quantity, urgency, address);
-
+    await sendEmergencyRequestCreatedEmail(
+      email,
+      fullName,
+      bloodGroup,
+      quantity,
+      urgency,
+      address
+    );
   } catch (err) {
     console.error("Emergency request error:", err);
     res
@@ -85,6 +87,7 @@ const submitEmergencyRequest = async (req, res) => {
       .json({ success: false, message: "Server error. Try again later." });
   }
 };
+
 
 // const updateEmergencyRequestStatusByAdmin = async (req, res) => {
 //   try {

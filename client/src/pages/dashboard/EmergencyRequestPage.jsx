@@ -20,7 +20,7 @@ const [formData, setFormData] = useState({
   manualAddress: "",
   document: null,
 });
-
+ 
 const [selectedCountryIso, setSelectedCountryIso] = useState("IN");
 const [selectedStateIso, setSelectedStateIso] = useState("");
 const [states, setStates] = useState([]);
@@ -60,11 +60,33 @@ useEffect(() => {
     }
   }
 }, [selectedStateIso, selectedCountryIso, states]);
-
+const cloudName = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME;
+const preset = import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+const cloudinaryData = new FormData();
+cloudinaryData.append("file", formData.document);
+cloudinaryData.append(
+  "upload_preset",
+  preset
+);
 
+let cloudinaryUrl = "";
+try {
+  const cloudinaryRes = await fetch(
+    `https://api.cloudinary.com/v1_1/${cloudName}/upload`,
+    {
+      method: "POST",
+      body: cloudinaryData,
+    }
+  );
+  const data = await cloudinaryRes.json();
+  cloudinaryUrl = data.secure_url;
+} catch (err) {
+  toast.error("Failed to upload document to Cloudinary");
+  return;
+}
     const formDataToSend = new FormData();
     formDataToSend.append("fullName", formData.fullName);
     formDataToSend.append("phone", formData.phone);
@@ -72,7 +94,8 @@ useEffect(() => {
     formDataToSend.append("bloodGroup", formData.bloodGroup);
     formDataToSend.append("urgency", formData.urgency);
     formDataToSend.append("quantity", formData.quantity);
-    formDataToSend.append("document", formData.document);
+  formDataToSend.append("documentUrl", cloudinaryUrl);
+
     formDataToSend.append(
       "address",
       JSON.stringify({
@@ -97,6 +120,8 @@ useEffect(() => {
 
     try {
       console.log("Submitting Data:", formDataToSend);
+// 1. Upload document to Cloudinary
+
 
       const res = await API.post("/emergency/submit", formDataToSend, {
         headers: { "Content-Type": "multipart/form-data" },

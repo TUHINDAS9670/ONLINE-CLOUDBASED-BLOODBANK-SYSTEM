@@ -42,30 +42,30 @@ app.use("/api/v1/emergency-donor", require("./routes/emergencyDonorRoutes"));
 //PORT
 const PORT =  process.env.PORT || 3000;
 
-const uploadsDir = path.join(__dirname, "uploads", "documents");
+// const uploadsDir = path.join(__dirname, "uploads", "documents");
 
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-  console.log("Created folder:", uploadsDir);
-}
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+// if (!fs.existsSync(uploadsDir)) {
+//   fs.mkdirSync(uploadsDir, { recursive: true });
+//   console.log("Created folder:", uploadsDir);
+// }
+// app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // app.use(express.static(path.join(__dirname,'./client/dist')))
-app.get("/view-document/:filename", (req, res) => {
-  const filePath = path.join(__dirname, "uploads", "documents", req.params.filename);
-  const ext = path.extname(filePath).toLowerCase();
+// app.get("/view-document/:filename", (req, res) => {
+//   const filePath = path.join(__dirname, "uploads", "documents", req.params.filename);
+//   const ext = path.extname(filePath).toLowerCase();
 
-  const mimeTypes = {
-    ".pdf": "application/pdf",
-    ".jpg": "image/jpeg",
-    ".jpeg": "image/jpeg",
-    ".png": "image/png"
-  };
+//   const mimeTypes = {
+//     ".pdf": "application/pdf",
+//     ".jpg": "image/jpeg",
+//     ".jpeg": "image/jpeg",
+//     ".png": "image/png"
+//   };
 
-  const contentType = mimeTypes[ext] || "application/octet-stream";
+//   const contentType = mimeTypes[ext] || "application/octet-stream";
 
-  res.setHeader("Content-Type", contentType);
-  res.sendFile(filePath);
-});
+//   res.setHeader("Content-Type", contentType);
+//   res.sendFile(filePath);
+// });
 
 // STATIC ROUTeS
 // app.get('*',function(req,res){
