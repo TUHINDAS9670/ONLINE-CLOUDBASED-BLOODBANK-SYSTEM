@@ -42,6 +42,45 @@ const sendApprovalEmail = async (toEmail, patientName, patientId, orgDetails) =>
 
   await transporter.sendMail(mailOptions);
 };
+const sendRejectionEmail = async (toEmail, patientName, patientId, rejectionReason, orgDetails) => {
+  const { name, contact, email, address } = orgDetails;
+
+  const orgFullAddress = `
+    ${address.location}, ${address.city}, ${address.district}, 
+    ${address.state}, ${address.country}
+  `.replace(/undefined|null/g, "").replace(/\s+,/g, ""); // clean formatting
+
+  const mailOptions = {
+    from: `"Blood Bank Service" <${process.env.MAIL_USER}>`,
+    to: toEmail,
+    subject: 'Your Emergency Blood Request was Rejected',
+    html: `
+      <p>Dear ${patientName},</p>
+
+      <p>We regret to inform you that your emergency blood request (Patient ID: <strong>${patientId}</strong>) has been <strong>rejected</strong> by the following organisation:</p>
+
+      <ul>
+        <li><strong>Name:</strong> ${name}</li>
+        <li><strong>Contact:</strong> ${contact}</li>
+        <li><strong>Email:</strong> ${email}</li>
+        <li><strong>Address:</strong> ${orgFullAddress}</li>
+      </ul>
+
+      <p><strong>Reason for Rejection:</strong> ${rejectionReason}</p>
+
+      <p>If you believe this was a mistake or need further help, please contact the organisation directly or consider submitting another request after 72 hours.</p>
+
+      <br>
+      <p>We hope you get the help you need soon.</p>
+
+      <br>
+      <p>Regards,<br>Blood Bank Team</p>
+    `
+  };
+
+  await transporter.sendMail(mailOptions);
+};
+
 
 const sendDonationConfirmationEmail = async (toEmail, donorName, quantity, bloodGroup, orgName) => {
   const mailOptions = {
@@ -340,6 +379,39 @@ const sendAdminRejectionEmail = async (toEmail, name, bloodGroup, quantity) => {
   await transporter.sendMail(mailOptions);
 };
 
+const sendEmergencyRequestFulfilledEmail = async (toEmail, patientName, patientId, orgDetails) => {
+  const { name, contact, email, address } = orgDetails;
+
+  const orgFullAddress = `
+    ${address.location}, ${address.city}, ${address.district}, 
+    ${address.state}, ${address.country}
+  `.replace(/undefined|null/g, "").replace(/\s+,/g, ""); // clean formatting
+
+  const mailOptions = {
+    from: `"Blood Bank Service" <${process.env.MAIL_USER}>`,
+    to: toEmail,
+    subject: 'Your Emergency Blood Request Has Been Fulfilled',
+    html: `
+      <p>Dear ${patientName},</p>
+
+      <p>We're happy to inform you that your emergency blood request (Patient ID: <strong>${patientId}</strong>) has been successfully <strong>fulfilled</strong> by the following organisation:</p>
+
+      <ul>
+        <li><strong>Name:</strong> ${name}</li>
+        <li><strong>Contact:</strong> ${contact}</li>
+        <li><strong>Email:</strong> ${email}</li>
+        <li><strong>Address:</strong> ${orgFullAddress}</li>
+      </ul>
+
+      <p>We hope this support has made a difference. Thank you for trusting our service during your time of need.</p>
+
+      <br>
+      <p>Wishing you a speedy recovery,<br><strong>Blood Bank Team</strong></p>
+    `
+  };
+
+  await transporter.sendMail(mailOptions);
+};
 
 
 module.exports = {
@@ -348,7 +420,7 @@ module.exports = {
   sendDonationApprovalEmail ,
   sendDonationRejectionEmail,
   sendHospitalRequestEmail,sendHospitalRequestStatusEmail,
-  sendDonationSuccessEmail,sendEmergencyRequestCreatedEmail,sendAdminRejectionEmail,sendAdminApprovalEmail
+  sendDonationSuccessEmail,sendEmergencyRequestCreatedEmail,sendAdminRejectionEmail,sendAdminApprovalEmail,sendRejectionEmail,sendEmergencyRequestFulfilledEmail
 };
 
 

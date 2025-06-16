@@ -15,10 +15,14 @@ const PublicInventoryDashboard = () => {
 
 const fetchInventory = async () => {
   try {
+     const stateName = stateFilter
+      ? State.getStateByCodeAndCountry("IN", stateFilter)?.name
+      : "";
     const res = await API.post("/inventory/public-inventory", {
       bloodGroup,
-      state: stateFilter,
+state: stateName,  // send full state name
       city: cityFilter,
+
     });
 
     // Convert state ISO to state name

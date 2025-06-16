@@ -170,7 +170,17 @@ const BloodRequestSchema = new mongoose.Schema({
       timestamp: Date,
       message: String, // Optional message/log for status update
     },
+    
   ],
+  approvedByOrganisation: {
+  type: Boolean,
+  default: false,
+},
+rejectionRemarks: {
+  type: String,
+ 
+},
+
 });
 
 module.exports = mongoose.model("BloodRequest", BloodRequestSchema);

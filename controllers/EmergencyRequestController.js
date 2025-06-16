@@ -116,7 +116,7 @@ const updateEmergencyRequestStatusByAdmin = async (req, res) => {
   try {
     const { userId, status, adminRemarks } = req.body;
 
-    // 🔐 Verify admin
+
     const user = await User.findById(userId);
     if (!user || user.role !== "Admin") {
       return res
@@ -148,26 +148,26 @@ const updateEmergencyRequestStatusByAdmin = async (req, res) => {
     res
       .status(200)
       .send({ success: true, message: "Admin status updated", data: request });
-{status == "admin_approved" &&
+if (status === "admin_approved") {
   await sendAdminApprovalEmail(
-  request.email,
-  request.fullName,
-  request.bloodGroup,
-  request.quantity,
-  status,
-  adminRemarks
-);
-}
-{status == "rejected_by_admin" &&
+    request.email,
+    request.fullName,
+    request.bloodGroup,
+    request.quantity,
+    status,
+    adminRemarks
+  );
+} else if (status === "rejected_by_admin") {
   await sendAdminRejectionEmail(
-  request.email,
-  request.fullName,
-  request.bloodGroup,
-  request.quantity,
-  status,
-  adminRemarks
-);
+    request.email,
+    request.fullName,
+    request.bloodGroup,
+    request.quantity,
+    status,
+    adminRemarks
+  );
 }
+
 
   } catch (error) {
     console.error(error);
