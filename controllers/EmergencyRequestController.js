@@ -4,7 +4,7 @@ const path = require("path");
 const { v4: uuidv4 } = require("uuid");
 const EmergencyRequest = require("../models/EmergencyRequestModel");
 const User = require("../models/userModel");
-const { sendApprovalEmail, sendEmergencyRequestCreatedEmail, sendAdminDecisionEmail, sendAdminRejectionEmail, sendAdminApprovalEmail } = require("../utils/sendMail");
+const { sendApprovalEmail, sendEmergencyRequestCreatedEmail, sendAdminDecisionEmail, sendAdminRejectionEmail, sendAdminApprovalEmail, sendRejectionEmail } = require("../utils/sendMail");
 
 
 const submitEmergencyRequest = async (req, res) => {
@@ -437,6 +437,31 @@ await updatedRequest.save();
   };
 
   await sendApprovalEmail(
+    updatedRequest.email,
+    updatedRequest.fullName,
+    updatedRequest.patientId,
+    orgDetails,
+  );
+}
+ if (status === "rejected_by_org") {
+  updatedRequest.handledBy = {
+  name: user.organisationName,
+  contact: user.phoneNumber,
+  email: user.email,
+  address:user.location.full
+};
+
+await updatedRequest.save();
+
+ const orgDetails = {
+    name: user.organisationName,
+    contact: user.phoneNumber,
+  email: user.email,
+  address: user.location,
+    
+  };
+
+  await sendRejectionEmail(
     updatedRequest.email,
     updatedRequest.fullName,
     updatedRequest.patientId,
