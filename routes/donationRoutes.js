@@ -7,7 +7,8 @@ const {
   getOrganisationDonationRequests,
   updateDonationRequest,
   deleteDonationRequest,
-  getDonorStats,getOrg
+  getDonorStats,getOrg,
+  getLastFulfilledDonation
 } = require('../controllers/donationController');
 const {authMiddleware} = require('../middlewares/authMiddleware');
 
@@ -16,6 +17,7 @@ router.post('/request', authMiddleware, createDonationRequest);
 
 // Donor views their requests
 router.get('/my-requests', authMiddleware, getDonorDonationRequests);
+router.get('/last-fulfilled', authMiddleware, getLastFulfilledDonation);
 
 // Organisation views all incoming requests
 router.get('/incoming-requests', authMiddleware, getOrganisationDonationRequests);

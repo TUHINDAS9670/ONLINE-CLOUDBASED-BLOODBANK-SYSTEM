@@ -6,6 +6,8 @@ import { toast } from "react-toastify";
 
 const DonationRequestPage = () => {
   const { user } = useSelector((state) => state.auth);
+  const [cooldownDaysLeft, setCooldownDaysLeft] = useState(0);
+
   const [organisations, setOrganisations] = useState([]);
   const [requests, setRequests] = useState([]);
   const [formData, setFormData] = useState({
@@ -23,6 +25,25 @@ const DonationRequestPage = () => {
   //     toast.error("Failed to load organisations");
   //   }
   // };
+  const checkCooldown = async () => {
+  try {
+    const res = await API.get("/donations/last-fulfilled"); // Create this API
+    if (res.data?.lastDonationDate) {
+      const last = new Date(res.data.lastDonationDate);
+      const now = new Date();
+      const diffDays = Math.floor((now - last) / (1000 * 60 * 60 * 24));
+      const daysLeft = 90 - diffDays;
+      if (daysLeft > 0) {
+        setCooldownDaysLeft(daysLeft);
+      }
+      console.log(daysLeft);
+      
+    }
+  } catch (error) {
+    console.error("Cooldown check failed", error);
+  }
+};
+
   const fetchOrganisations = async () => {
     try {
       const res = await API.post("/donations/filter-orgs", {
@@ -73,6 +94,7 @@ const DonationRequestPage = () => {
   useEffect(() => {
     fetchOrganisations();
     fetchRequests();
+    checkCooldown();
   }, []);
 
   const handleEdit = async (req) => {
@@ -110,8 +132,12 @@ const DonationRequestPage = () => {
         <h1 className="text-xl font-bold mb-4 text-red-600">
           Request Blood Donation
         </h1>
-
-        <form
+{cooldownDaysLeft > 0 ? (
+  <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+    You are in a cooldown period. Please wait <b>{cooldownDaysLeft} day(s)</b> before submitting another donation request.
+  </div>
+) : (
+  <form
           onSubmit={handleSubmit}
           className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded shadow border"
         >
@@ -178,6 +204,9 @@ const DonationRequestPage = () => {
             Submit Request
           </button>
         </form>
+)}
+
+       
 
         <div className="mt-8 overflow-x-auto">
           <h2 className="font-semibold mb-2 text-lg text-gray-800">

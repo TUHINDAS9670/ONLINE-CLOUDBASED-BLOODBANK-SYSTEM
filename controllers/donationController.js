@@ -214,6 +214,26 @@ const createDonationRequest = async (req, res) => {
       return res.status(400).json({ message: "Invalid donor" });
     }
 
+    // 🔒 Check for cooldown (90 days from last fulfilled donation)
+    const lastDonation = await DonationRequest.findOne({
+      donor: donorId,
+      status: "fulfilled", // You may use another status field based on your schema
+    }).sort({ updatedAt: -1 });
+
+    if (lastDonation) {
+      const lastDate = new Date(lastDonation.updatedAt);
+      const now = new Date();
+      const daysSince = (now - lastDate) / (1000 * 60 * 60 * 24);
+
+      if (daysSince < 90) {
+        return res.status(400).json({
+          message: `You can only make a new donation request after ${Math.ceil(
+            90 - daysSince
+          )} day(s).`,
+        });
+      }
+    }
+
     const request = await DonationRequest.create({
       donor: donorId,
       organisation: organisationId,
@@ -239,6 +259,23 @@ const createDonationRequest = async (req, res) => {
     res.status(500).json({ message: "Server Error", error });
   }
 };
+// GET /donations/last-fulfilled
+const getLastFulfilledDonation = async (req, res) => {
+  try {
+    const donorId = req.body.userId // or from token
+    const last = await DonationRequest.findOne({
+      donor: donorId,
+      status: "fulfilled",
+    }).sort({ updatedAt: -1 });
+
+    if (!last) return res.json({ lastDonationDate: null });
+
+    res.json({ lastDonationDate: last.updatedAt });
+  } catch (err) {
+    res.status(500).json({ message: "Error fetching last donation" });
+  }
+};
+
 
 // Organisation updates request status
 // const updateDonationRequestStatus = async (req, res) => {
@@ -518,7 +555,7 @@ const getDonorStats = async (req, res) => {
     const total = await DonationRequest.countDocuments({ donor: donorId });
     const approved = await DonationRequest.countDocuments({
       donor: donorId,
-      status: "approved",
+      status: "fulfilled",
     });
     const rejected = await DonationRequest.countDocuments({
       donor: donorId,
@@ -562,4 +599,5 @@ module.exports = {
   updateDonationRequest,
   getDonorStats,
   getOrg,
+  getLastFulfilledDonation
 };

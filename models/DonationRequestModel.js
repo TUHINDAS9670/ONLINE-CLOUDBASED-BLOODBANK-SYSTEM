@@ -18,6 +18,8 @@ const donationRequestSchema = new mongoose.Schema({
   remarks: { type: String }, 
   appointmentDate: { type: Date }, 
   date: { type: Date, default: Date.now },
+},{
+  timestamps: true  // <-- Add this
 });
 
 module.exports = mongoose.model("donationrequests", donationRequestSchema);
